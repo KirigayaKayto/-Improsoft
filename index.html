@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title data-i18n="meta.title">Improsoft — автоматизация бизнеса в Узбекистане</title>
+  <meta name="description" data-i18n-content="meta.description" content="Improsoft — готовые решения для автоматизации кафе, магазинов и аптек в Узбекистане. Платформа Impro: касса, склад, отчёты. Поддержка 24/7.">
+  <!-- TODO: перед публикацией замените improsoft.uz на рабочий домен сайта -->
+  <link rel="canonical" href="https://improsoft.uz/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Improsoft">
+  <meta property="og:locale" content="ru_RU">
+  <meta property="og:title" content="Improsoft — автоматизация бизнеса в Узбекистане">
+  <meta property="og:description" content="Один узор — весь ваш бизнес. Платформа Impro: кафе, магазины, аптеки. Поддержка 24/7 на узбекском и русском.">
+  <meta property="og:url" content="https://improsoft.uz/">
+  <meta property="og:image" content="https://improsoft.uz/assets/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600&family=Golos+Text:wght@400;500;600&family=PT+Mono&family=Neucha&family=Poppins:wght@400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Шторка «печатающей головки» при смене языка -->
+  <div class="printhead" id="printhead" aria-hidden="true"></div>
+
+  <!-- Позвоночник: непрерывная линия страницы -->
+  <div class="spine" aria-hidden="true">
+    <span class="spine__track"></span>
+    <span class="spine__fill" id="spineFill"></span>
+  </div>
+
+  <!-- ===== Шапка ===== -->
+  <header class="topbar" id="topbar">
+    <div class="frame topbar__inner">
+      <a href="#" class="wordmark" aria-label="Improsoft — на главную">impr<svg class="wordmark__o" viewBox="0 0 36 36" aria-hidden="true"><path d="M 10 9.8 A 13 13 0 1 0 26 9.8" fill="none"/><rect x="16.4" y="2" width="3.2" height="13" rx="1.6"/></svg><span>soft</span></a>
+      <nav class="topbar__nav" aria-label="Основная навигация" data-i18n-aria-label="a11y.mainNav">
+        <a href="#cafe" data-i18n="nav.products">Продукты</a>
+        <a href="#platform" data-i18n="nav.platform">Платформа</a>
+        <a href="#route" data-i18n="nav.about">О компании</a>
+        <a href="#zayavka" data-i18n="nav.contacts">Контакты</a>
+      </nav>
+      <div class="topbar__actions">
+        <div class="stamps" role="group" aria-label="Выбор языка" data-i18n-aria-label="a11y.langSwitcher">
+          <button class="stamp" data-lang="ru" type="button" aria-pressed="true">RU</button>
+          <button class="stamp" data-lang="uz" type="button" aria-pressed="false">UZ</button>
+          <button class="stamp" data-lang="en" type="button" aria-pressed="false">EN</button>
+        </div>
+        <a class="stamp stamp--tg" href="https://t.me/improsoft" target="_blank" rel="noopener">Telegram</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ===== 1. CHIZMA — первый штрих ===== -->
+    <section class="hero" id="chizma">
+      <div class="frame">
+        <p class="kicker" data-i18n="hero2.kicker">Автоматизация бизнеса · Узбекистан</p>
+        <h1 class="hero__title" data-i18n="hero2.title">Один узор — весь ваш бизнес</h1>
+
+        <!-- Линия рождается: подрисовка + штрих с гирих-изломом -->
+        <div class="hero__line" aria-hidden="true">
+          <svg viewBox="0 0 1200 130" preserveAspectRatio="xMidYMid meet">
+            <!-- подрисовка: циркульные дуги мастера -->
+            <g class="underdraw">
+              <circle cx="620" cy="64" r="46" />
+              <circle cx="620" cy="64" r="24" />
+              <path d="M 540 64 H 700" />
+              <path d="M 620 -16 V 144" />
+            </g>
+            <path class="drawline" id="heroLine"
+              d="M -10 64 L 540 64 L 588 28 L 652 100 L 700 64 L 1210 64" />
+            <!-- насечки-статистика на линии -->
+            <g class="hero__ticks">
+              <line x1="180" y1="52" x2="180" y2="76"/>
+              <line x1="330" y1="52" x2="330" y2="76"/>
+              <line x1="480" y1="52" x2="480" y2="76"/>
+            </g>
+          </svg>
+        </div>
+
+        <div class="hero__row">
+          <p class="hero__sub" data-i18n="hero2.sub">Готовые решения для кафе и ресторанов, магазинов и аптек. Быстрое внедрение, обучение персонала и поддержка 24/7 на узбекском и русском языках.</p>
+          <ul class="hero__stats">
+            <li><b class="mono">3</b> <span data-i18n="hero.stat1">страны присутствия</span></li>
+            <li><b class="mono">6</b> <span data-i18n="hero.stat2">городов Узбекистана</span></li>
+            <li><b class="mono">24/7</b> <span data-i18n="hero.stat3">техническая поддержка</span></li>
+          </ul>
+        </div>
+
+        <div class="hero__cta">
+          <a href="#zayavka" class="btn" data-i18n="hero2.cta1">Посмотреть демо — бесплатно</a>
+          <a href="#try" class="linklead" data-i18n="hero2.cta2">Попробовать кассу прямо здесь ↓</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 2. ДАФТАР — порог между памятью и учётом ===== -->
+    <section class="section section--warm daftar" id="daftar">
+      <div class="frame">
+        <p class="kicker mono" data-i18n="daftar.kicker">Глава 01 · Дафтар</p>
+        <h2 class="h2 underdrawn" data-i18n="daftar.title">Дафтар помнит не всё. Impro помнит всё.</h2>
+        <p class="lead" data-i18n="daftar.sub">Нажмите на запись — и она станет учётом.</p>
+
+        <div class="daftar__board">
+          <div class="daftar__paper" id="daftarPaper">
+            <button class="dentry" type="button" data-row="0">
+              <span class="dentry__hand" data-i18n="daftar.e1">Карим ака — 45 000 сум — вторник?</span>
+            </button>
+            <button class="dentry" type="button" data-row="1">
+              <span class="dentry__hand" data-i18n="daftar.e2">чой, лепёшки ×20 — 12 000</span>
+            </button>
+            <button class="dentry" type="button" data-row="2">
+              <span class="dentry__hand" data-i18n="daftar.e3">Азиз — долг 80 000 — ???</span>
+            </button>
+            <button class="dentry" type="button" data-row="3">
+              <span class="dentry__hand" data-i18n="daftar.e4">Севара опа — 26 500 — обещала в четверг</span>
+            </button>
+            <p class="daftar__papernote mono" data-i18n="daftar.paperNote">— страница из дафтара —</p>
+          </div>
+
+          <div class="daftar__threshold" aria-hidden="true"></div>
+
+          <div class="daftar__ledger" aria-live="polite">
+            <p class="daftar__ledgerhead mono" data-i18n="daftar.ledgerHead">IMPRO · ЖУРНАЛ ОПЕРАЦИЙ</p>
+            <p class="daftar__empty mono" id="daftarEmpty" data-i18n="daftar.empty">— записи появятся здесь —</p>
+            <div class="lrow" data-row="0" hidden>
+              <span class="lrow__name" data-i18n="daftar.l1">Карим ака · долг</span>
+              <span class="lrow__dots"></span>
+              <span class="lrow__sum mono">45 000</span>
+              <span class="lrow__tick">✓</span>
+            </div>
+            <div class="lrow" data-row="1" hidden>
+              <span class="lrow__name" data-i18n="daftar.l2">Чай, лепёшки ×20</span>
+              <span class="lrow__dots"></span>
+              <span class="lrow__sum mono">12 000</span>
+              <span class="lrow__tick">✓</span>
+            </div>
+            <div class="lrow" data-row="2" hidden>
+              <span class="lrow__name" data-i18n="daftar.l3">Азиз · долг + срок</span>
+              <span class="lrow__dots"></span>
+              <span class="lrow__sum mono">80 000</span>
+              <span class="lrow__tick">✓</span>
+            </div>
+            <div class="lrow" data-row="3" hidden>
+              <span class="lrow__name" data-i18n="daftar.l4">Севара опа · до четверга</span>
+              <span class="lrow__dots"></span>
+              <span class="lrow__sum mono">26 500</span>
+              <span class="lrow__tick">✓</span>
+            </div>
+            <div class="lrow lrow--total" id="daftarTotal" hidden>
+              <span class="lrow__name mono" data-i18n="daftar.total">ИТОГО · ничего не забыто</span>
+              <span class="lrow__dots"></span>
+              <span class="lrow__sum mono">163 500</span>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn--ghost daftar__all" id="daftarAll" type="button" data-i18n="daftar.all">Провести все записи</button>
+      </div>
+    </section>
+
+    <!-- ===== 3. IMPRO CAFE — узел-розетка ===== -->
+    <!-- ===== 2a. ПОПРОБУЙТЕ САМИ: демо кассы ===== -->
+    <section class="section try try--dark ondark" id="try">
+      <div class="frame">
+        <p class="kicker mono" data-i18n="try.kicker">Глава 02 · Попробуйте сами</p>
+        <h2 class="h2 underdrawn" data-i18n="try.title">Нажмите — и касса заработает</h2>
+        <p class="lead" data-i18n="try.sub">Так выглядит смена в Impro Cafe. Соберите заказ — без установки и регистрации.</p>
+        <div class="try__grid">
+          <div class="pos pos--screen">
+            <p class="pos__head mono" data-i18n="try.posHead">IMPRO CAFE · СМЕНА ОТКРЫТА</p>
+            <div class="pos__items">
+              <button class="pos__item" type="button" data-name="i1" data-price="32000"><span data-i18n="try.i1">Плов</span><b class="mono">32 000</b></button>
+              <button class="pos__item" type="button" data-name="i2" data-price="28000"><span data-i18n="try.i2">Лагман</span><b class="mono">28 000</b></button>
+              <button class="pos__item" type="button" data-name="i3" data-price="18000"><span data-i18n="try.i3">Шашлык</span><b class="mono">18 000</b></button>
+              <button class="pos__item" type="button" data-name="i4" data-price="4000"><span data-i18n="try.i4">Нон</span><b class="mono">4 000</b></button>
+              <button class="pos__item" type="button" data-name="i5" data-price="12000"><span data-i18n="try.i5">Салат</span><b class="mono">12 000</b></button>
+              <button class="pos__item" type="button" data-name="i6" data-price="5000"><span data-i18n="try.i6">Чой</span><b class="mono">5 000</b></button>
+            </div>
+            <p class="pos__hint mono" data-i18n="try.hint">— нажмите на блюдо, чтобы добавить в чек —</p>
+          </div>
+          <div class="posreceipt" aria-live="polite">
+            <p class="posreceipt__head mono"><span data-i18n="try.receiptHead">ЧЕК</span> <span>№ 0215</span></p>
+            <p class="posreceipt__empty mono" id="posEmpty" data-i18n="try.empty">— чек пуст —</p>
+            <div class="posreceipt__rows" id="posRows"></div>
+            <div class="posreceipt__total">
+              <span class="mono" data-i18n="try.total">ИТОГО</span>
+              <span class="posreceipt__dots"></span>
+              <span class="mono" id="posTotal">0</span>
+            </div>
+            <button class="btn btn--full" id="posPay" type="button" disabled data-i18n="try.pay">Оплатить</button>
+            <p class="posreceipt__done mono" id="posDone" hidden><span data-i18n="try.paid">Оплачено ✓ Выручка смены:</span> <b id="posRevenue">0</b> <span data-i18n="try.sum">сум</span></p>
+          </div>
+        </div>
+        <p class="try__note" data-i18n="try.note">Это упрощённое демо. Вживую покажем полную кассу — с кухней, складом и отчётами.</p>
+      </div>
+    </section>
+
+    <!-- TODO: соцдоказательство: раскомментировать, когда будут цифра и названия клиентов.
+         Число заведений подставить в data-target и текст, названия клиентов: в плашки.
+    <section class="proof">
+      <div class="frame proof__inner">
+        <p class="proof__count"><b class="mono" id="proofNum" data-target="000">0</b> <span data-i18n="proof.label">заведений уже работают на Impro</span></p>
+        <div class="proof__names">
+          <span class="tag"><i>НАЗВАНИЕ КЛИЕНТА 1</i></span>
+          <span class="tag"><i>НАЗВАНИЕ КЛИЕНТА 2</i></span>
+          <span class="tag"><i>НАЗВАНИЕ КЛИЕНТА 3</i></span>
+        </div>
+      </div>
+    </section>
+    -->
+
+    <section class="section chapter" id="cafe">
+      <div class="watermark" aria-hidden="true">
+        <svg viewBox="0 0 140 140"><path d="M 40 96 Q 40 54 70 54 Q 100 54 100 96 M 26 96 H 114 M 34 104 Q 70 118 106 104"/></svg>
+      </div>
+      <div class="frame chapter__grid">
+        <div class="chapter__text">
+          <div class="knot" aria-hidden="true">
+            <svg viewBox="0 0 140 140">
+              <g class="underdraw"><circle cx="70" cy="70" r="60"/></g>
+              <path class="drawknot" d="M 40 96 Q 40 54 70 54 Q 100 54 100 96"/>
+              <path class="drawknot" d="M 26 96 H 114"/>
+              <path class="drawknot drawknot--late" d="M 34 104 Q 70 118 106 104"/>
+              <circle class="knot__dot" cx="70" cy="46" r="4.5"/>
+              <path class="steam" d="M 70 36 Q 65 28 70 20"/>
+            </svg>
+          </div>
+          <p class="kicker mono" data-i18n="chap.cafe">Глава 03 · Кафе и рестораны</p>
+          <h2 class="h2" >Impro Cafe</h2>
+          <p class="lead" data-i18n="products.cafe.desc">Система автоматизации для кафе, ресторанов, баров, столовых и фуд-кортов.</p>
+          <ul class="leaders">
+            <li><span data-i18n="products.cafe.f1">Терминал официанта и кассира</span><span class="leaders__dots"></span><span class="leaders__tick mono">✓</span></li>
+            <li><span data-i18n="products.cafe.f2">Кухонный экран заказов</span><span class="leaders__dots"></span><span class="leaders__tick mono">✓</span></li>
+            <li><span data-i18n="products.cafe.f3">Калькуляция блюд и склад</span><span class="leaders__dots"></span><span class="leaders__tick mono">✓</span></li>
+            <li><span data-i18n="products.cafe.f4">Отчёты по выручке и персоналу</span><span class="leaders__dots"></span><span class="leaders__tick mono">✓</span></li>
+          </ul>
+          <a href="#zayavka" class="linklead" data-product="cafe" data-i18n="chap.more">Подробнее →</a>
+        </div>
+        <div class="chapter__vignette">
+          <div class="ticket" id="cafeTicket">
+            <p class="ticket__head mono" data-i18n="cafe.ticketHead">КУХНЯ · СТОЛ 7</p>
+            <div class="ticket__row">
+              <span data-i18n="cafe.dish1">Лагман · 2</span>
+              <span class="ticket__state mono" data-state="cook">готовится</span>
+            </div>
+            <div class="ticket__row">
+              <span data-i18n="cafe.dish2">Шашлык · 4</span>
+              <span class="ticket__state mono" data-state="cook">готовится</span>
+            </div>
+            <div class="ticket__row">
+              <span data-i18n="cafe.dish3">Чай · 1</span>
+              <span class="ticket__state mono" data-state="done">подано</span>
+            </div>
+            <p class="ticket__foot mono">12:47 · #0214</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 4. IMPRO MARKET — линия становится штрих-кодом ===== -->
+    <section class="section section--tint chapter chapter--flip" id="market">
+      <div class="watermark" aria-hidden="true">
+        <svg viewBox="0 0 160 90">
+          <rect x="12" y="10" width="4" height="60"/><rect x="20" y="10" width="2" height="60"/>
+          <rect x="26" y="10" width="6" height="60"/><rect x="36" y="10" width="2" height="60"/>
+          <rect x="42" y="10" width="3" height="60"/><rect x="49" y="10" width="6" height="60"/>
+          <rect x="59" y="10" width="2" height="60"/><rect x="65" y="10" width="4" height="60"/>
+          <rect x="73" y="10" width="2" height="60"/><rect x="79" y="10" width="6" height="60"/>
+          <rect x="89" y="10" width="3" height="60"/><rect x="96" y="10" width="2" height="60"/>
+          <rect x="102" y="10" width="5" height="60"/><rect x="111" y="10" width="2" height="60"/>
+          <rect x="117" y="10" width="4" height="60"/><rect x="125" y="10" width="6" height="60"/>
+          <rect x="135" y="10" width="2" height="60"/><rect x="141" y="10" width="4" height="60"/>
+        </svg>
+      </div>
+      <div class="frame chapter__grid">
+        <div class="chapter__text">
+          <div class="knot knot--barcode" aria-hidden="true">
+            <svg viewBox="0 0 160 90" id="barcodeSvg">
+              <g class="barcode">
+                <rect x="12" y="10" width="4" height="60"/><rect x="20" y="10" width="2" height="60"/>
+                <rect x="26" y="10" width="6" height="60"/><rect x="36" y="10" width="2" height="60"/>
+                <rect x="42" y="10" width="3" height="60"/><rect x="49" y="10" width="6" height="60"/>
+                <rect x="59" y="10" width="2" height="60"/><rect x="65" y="10" width="4" height="60"/>
+                <rect x="73" y="10" width="2" height="60"/><rect x="79" y="10" width="6" height="60"/>
+                <rect x="89" y="10" width="3" height="60"/><rect x="96" y="10" width="2" height="60"/>
+                <rect x="102" y="10" width="5" height="60"/><rect x="111" y="10" width="2" height="60"/>
+                <rect x="117" y="10" width="4" height="60"/><rect x="125" y="10" width="6" height="60"/>
+                <rect x="135" y="10" width="2" height="60"/><rect x="141" y="10" width="4" height="60"/>
+              </g>
+              <line class="scanline" x1="8" y1="40" x2="152" y2="40"/>
+              <text class="barcode__label" x="80" y="86" text-anchor="middle">I M P R O</text>
+            </svg>
+          </div>
+          <p class="kicker mono" data-i18n="chap.market">Глава 04 · Магазины</p>
+          <h2 class="h2">Impro Market</h2>
+          <p class="lead" data-i18n="products.market.desc">Система автоматизации для магазинов, минимаркетов и бутиков.</p>
+          <div class="tags">
+            <span class="tag"><i data-i18n="products.market.f1">Быстрая касса со штрихкодами</i><b class="mono">01</b></span>
+            <span class="tag"><i data-i18n="products.market.f2">Учёт товаров и инвентаризация</i><b class="mono">02</b></span>
+            <span class="tag"><i data-i18n="products.market.f3">Ценники и скидочные акции</i><b class="mono">03</b></span>
+            <span class="tag"><i data-i18n="products.market.f4">Аналитика продаж в реальном времени</i><b class="mono">04</b></span>
+          </div>
+          <a href="#zayavka" class="linklead" data-product="market" data-i18n="chap.more">Подробнее →</a>
+        </div>
+        <div class="chapter__vignette">
+          <div class="shelf">
+            <p class="shelf__head mono" data-i18n="market.shelfHead">КАССА · СМЕНА 2</p>
+            <div class="shelf__row"><span data-i18n="market.i1">Молоко 1 л</span><span class="shelf__dots"></span><span class="mono">9 800</span></div>
+            <div class="shelf__row"><span data-i18n="market.i2">Лепёшка</span><span class="shelf__dots"></span><span class="mono">4 000</span></div>
+            <div class="shelf__row"><span data-i18n="market.i3">Рис, 1 кг</span><span class="shelf__dots"></span><span class="mono">18 500</span></div>
+            <div class="shelf__row shelf__row--total"><span class="mono" data-i18n="market.total">ИТОГО</span><span class="shelf__dots"></span><span class="mono">32 300</span></div>
+            <p class="ticket__foot mono" data-i18n="market.stockNote">остатки обновлены автоматически</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 5. IMPRO PHARM — узел-хатам ===== -->
+    <section class="section chapter" id="pharm">
+      <div class="watermark" aria-hidden="true">
+        <svg viewBox="0 0 140 140"><path d="M 56 28 H 84 V 56 H 112 V 84 H 84 V 112 H 56 V 84 H 28 V 56 H 56 Z"/></svg>
+      </div>
+      <div class="frame chapter__grid">
+        <div class="chapter__text">
+          <div class="knot" aria-hidden="true">
+            <svg viewBox="0 0 140 140">
+              <g class="underdraw"><circle cx="70" cy="70" r="60"/></g>
+              <path class="drawknot" d="M 56 28 H 84 V 56 H 112 V 84 H 84 V 112 H 56 V 84 H 28 V 56 H 56 Z"/>
+              <circle class="knot__dot" cx="70" cy="70" r="4.5"/>
+            </svg>
+          </div>
+          <p class="kicker mono" data-i18n="chap.pharm">Глава 05 · Аптеки</p>
+          <h2 class="h2">Impro Pharm</h2>
+          <p class="lead" data-i18n="products.pharm.desc">Система автоматизации для аптек и фармацевтического бизнеса.</p>
+          <ul class="leaders">
+            <li><span data-i18n="products.pharm.f1">Учёт медикаментов по сериям</span><span class="leaders__dots"></span><span class="leaders__tick mono">✓</span></li>
+            <li><span data-i18n="products.pharm.f2">Контроль сроков годности</span><span class="leaders__dots"></span><span class="leaders__tick mono">✓</span></li>
+            <li><span data-i18n="products.pharm.f3">Интеграция со справочниками</span><span class="leaders__dots"></span><span class="leaders__tick mono">✓</span></li>
+            <li><span data-i18n="products.pharm.f4">Отчётность для контролирующих органов</span><span class="leaders__dots"></span><span class="leaders__tick mono">✓</span></li>
+          </ul>
+          <a href="#zayavka" class="linklead" data-product="pharm" data-i18n="chap.more">Подробнее →</a>
+        </div>
+        <div class="chapter__vignette">
+          <div class="batch">
+            <p class="batch__head mono" data-i18n="pharm.batchHead">ПАРТИЯ · КОНТРОЛЬ СРОКОВ</p>
+            <div class="batch__cell">
+              <span class="mono">A-2231</span>
+              <span class="mono batch__date" data-i18n="pharm.expiry">годен до 03.2027</span>
+              <span class="batch__ok mono">OK</span>
+            </div>
+            <div class="batch__cell batch__cell--warn">
+              <span class="mono">B-1187</span>
+              <span class="mono batch__date" data-i18n="pharm.expiry2">годен до 09.2026</span>
+              <span class="batch__ok mono" data-i18n="pharm.warn">СКОРО</span>
+            </div>
+            <p class="ticket__foot mono" data-i18n="pharm.note">система предупредит заранее</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 6. КУПОЛ — платформа (единственная тёмная глава) ===== -->
+    <section class="dome" id="platform">
+      <div class="frame dome__grid">
+        <div class="dome__visual" aria-hidden="true">
+          <svg viewBox="0 0 320 320">
+            <g class="underdraw underdraw--light">
+              <circle cx="160" cy="160" r="140"/>
+            </g>
+            <path class="drawknot" d="M 160 104 V 81 M 115 186 L 91 199 M 205 186 L 229 199"/>
+            <circle class="dome__sat" cx="160" cy="55" r="27"/>
+            <circle class="dome__sat" cx="69" cy="212" r="27"/>
+            <circle class="dome__sat" cx="251" cy="212" r="27"/>
+            <!-- мини-иконки: блюдо / штрих-код / крест -->
+            <path class="drawknot drawknot--late" d="M 149 60 Q 149 47 160 47 Q 171 47 171 60 M 145 62 H 175"/>
+            <path class="drawknot drawknot--late" d="M 58 202 V 222 M 64 202 V 222 M 70 202 V 222 M 76 202 V 222 M 81 202 V 222"/>
+            <path class="drawknot drawknot--late" d="M 251 200 V 224 M 239 212 H 263"/>
+            <circle class="dome__corecircle" cx="160" cy="160" r="56"/>
+            <text class="dome__core" x="160" y="170" text-anchor="middle">Impro</text>
+          </svg>
+          <div class="dome__satellites">
+            <span class="satellite"><b>Impro Cloud</b><i data-i18n="products.cloud.desc">Доступ к данным вашего бизнеса из любой точки мира — в облаке.</i></span>
+            <span class="satellite"><b>Impro Mobile</b><i data-i18n="products.mobile.desc">Мобильное приложение для владельца: продажи и остатки всегда под рукой.</i></span>
+          </div>
+        </div>
+        <div class="dome__text">
+          <p class="kicker mono" data-i18n="dome.kicker">Глава 06 · Купол</p>
+          <h2 class="h2" data-i18n="platform.title">Одна платформа — все решения</h2>
+          <p class="lead" data-i18n="platform.text1">Все продукты Improsoft построены на единой платформе Impro с гибким ядром. Это значит, что система легко адаптируется под особенности именно вашего бизнеса.</p>
+          <p class="lead" data-i18n="platform.text2">Мы работаем с общепитом, торговлей, аптеками, гостиницами и производством. Клиенты Improsoft сокращают расходы на ведение учёта и уверенно расширяют бизнес.</p>
+          <ul class="leaders leaders--light">
+            <li><span data-i18n="platform.li1">Гибкое ядро, настраиваемое под любые процессы</span><span class="leaders__dots"></span><span class="leaders__tick mono">✓</span></li>
+            <li><span data-i18n="platform.li2">Единая база данных для всех филиалов</span><span class="leaders__dots"></span><span class="leaders__tick mono">✓</span></li>
+            <li><span data-i18n="platform.li3">Работает офлайн — интернет не обязателен</span><span class="leaders__dots"></span><span class="leaders__tick mono">✓</span></li>
+            <li><span data-i18n="platform.li4">Понятный интерфейс для персонала любого уровня</span><span class="leaders__dots"></span><span class="leaders__tick mono">✓</span></li>
+          </ul>
+          <a href="#zayavka" class="btn btn--light" data-i18n="platform.cta">Обсудить проект</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 7. USTALIK — почему Improsoft (тихая глава) ===== -->
+    <!-- Гигантское слово: одно на каждом языке -->
+    <section class="bigword">
+      <div class="frame">
+        <p class="bigword__word" data-i18n="bigword.word">УЧЁТ.</p>
+        <p class="bigword__caption mono" data-i18n="bigword.caption">одно слово — вся суть Impro</p>
+      </div>
+    </section>
+
+    <!-- ===== 7. ОДИН ДЕНЬ С IMPRO ===== -->
+    <section class="section section--tint dayline" id="day">
+      <div class="frame">
+        <p class="kicker mono" data-i18n="day.kicker">Глава 07 · Один день с Impro</p>
+        <h2 class="h2 underdrawn" data-i18n="day.title">Обычный день — всё под присмотром</h2>
+        <div class="dayline__grid">
+          <article class="daycard">
+            <p class="daycard__time mono">08:00</p>
+            <div class="daycard__art knot" aria-hidden="true">
+              <svg viewBox="0 0 200 140">
+                <g class="underdraw"><circle cx="80" cy="94" r="40"/></g>
+                <path class="drawknot" d="M 52 116 Q 44 96 52 82 Q 60 70 80 70 Q 100 70 108 82 Q 116 96 108 116 Q 100 122 80 122 Q 60 122 52 116 Z"/>
+                <path class="drawknot" d="M 52 92 Q 34 88 30 74"/>
+                <path class="drawknot" d="M 108 92 Q 128 92 126 76 Q 125 66 112 68"/>
+                <path class="drawknot drawknot--late" d="M 68 70 Q 80 60 92 70"/>
+                <circle class="knot__dot" cx="80" cy="58" r="3.5"/>
+                <path class="drawknot drawknot--late" d="M 140 108 Q 144 122 158 122 Q 172 122 176 108"/>
+                <path class="drawknot drawknot--late" d="M 154 122 L 154 127 L 162 127 L 162 122"/>
+                <path class="steam" d="M 158 96 Q 152 86 158 76 Q 164 68 158 58"/>
+              </svg>
+            </div>
+            <h3 class="daycard__place" data-i18n="day.h1">Чайхана</h3>
+            <p class="daycard__text" data-i18n="day.d1">Официант принял заказ с планшета — кухня уже готовит. Ни одной бумажки.</p>
+          </article>
+          <article class="daycard">
+            <p class="daycard__time mono">13:00</p>
+            <div class="daycard__art knot" aria-hidden="true">
+              <svg viewBox="0 0 200 140">
+                <g class="underdraw"><circle cx="100" cy="88" r="46"/></g>
+                <path class="drawknot" d="M 60 122 H 140"/>
+                <path class="drawknot" d="M 100 122 V 52"/>
+                <path class="drawknot" d="M 58 52 H 142"/>
+                <path class="drawknot drawknot--late" d="M 58 52 L 46 78 M 58 52 L 70 78"/>
+                <path class="drawknot drawknot--late" d="M 42 78 Q 58 92 74 78"/>
+                <path class="drawknot drawknot--late" d="M 142 52 L 130 78 M 142 52 L 154 78"/>
+                <path class="drawknot drawknot--late" d="M 126 78 Q 142 92 158 78"/>
+                <circle class="knot__dot" cx="100" cy="48" r="4"/>
+              </svg>
+            </div>
+            <h3 class="daycard__place" data-i18n="day.h2">Дўкон</h3>
+            <p class="daycard__text" data-i18n="day.d2">Касса пикнула — остатки обновились сами. Вечером не надо ничего пересчитывать.</p>
+          </article>
+          <article class="daycard">
+            <p class="daycard__time mono">18:00</p>
+            <div class="daycard__art knot" aria-hidden="true">
+              <svg viewBox="0 0 200 140">
+                <g class="underdraw"><circle cx="86" cy="90" r="44"/></g>
+                <path class="drawknot" d="M 70 122 Q 64 122 64 114 L 64 88 Q 64 78 74 74 L 74 62 L 98 62 L 98 74 Q 108 78 108 88 L 108 114 Q 108 122 102 122 Z"/>
+                <path class="drawknot drawknot--late" d="M 72 62 H 100 V 54 H 72 Z"/>
+                <path class="drawknot drawknot--late" d="M 86 90 V 106 M 78 98 H 94"/>
+                <path class="drawknot drawknot--late" d="M 136 106 Q 140 122 156 122 Q 172 122 176 106 Z"/>
+                <path class="drawknot drawknot--late" d="M 146 84 L 162 100"/>
+                <circle class="knot__dot" cx="146" cy="82" r="3.5"/>
+              </svg>
+            </div>
+            <h3 class="daycard__place" data-i18n="day.h3">Дорихона</h3>
+            <p class="daycard__text" data-i18n="day.d3">Система напомнила: у партии B-1187 подходит срок. Заранее, а не когда уже поздно.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="ustalik">
+      <div class="frame">
+        <p class="kicker mono" data-i18n="ustalik.kicker">Глава 08 · Усталик — мастерство</p>
+        <h2 class="h2 underdrawn" data-i18n="features.title">Почему выбирают Improsoft</h2>
+        <div class="ledgertable">
+          <div class="lcell">
+            <span class="lcell__tag mono" data-i18n="ustalik.t1">СРОКИ</span>
+            <h3 data-i18n="features.f1.title">Быстрое внедрение</h3>
+            <p data-i18n="features.f1.desc">Установка, настройка и обучение персонала — за несколько дней, а не месяцев.</p>
+          </div>
+          <div class="lcell">
+            <span class="lcell__tag mono" data-i18n="ustalik.t2">ОБНОВЛЕНИЯ</span>
+            <h3 data-i18n="features.f2.title">Автообновления</h3>
+            <p data-i18n="features.f2.desc">Система обновляется автоматически — у вас всегда актуальная версия.</p>
+          </div>
+          <div class="lcell">
+            <span class="lcell__tag mono" data-i18n="ustalik.t3">КОПИИ</span>
+            <h3 data-i18n="features.f3.title">Резервное копирование</h3>
+            <p data-i18n="features.f3.desc">Мы регулярно создаём резервные копии данных — ничего не потеряется.</p>
+          </div>
+          <div class="lcell">
+            <span class="lcell__tag mono" data-i18n="ustalik.t4">РОСТ</span>
+            <h3 data-i18n="features.f4.title">Масштабируемость</h3>
+            <p data-i18n="features.f4.desc">От одной точки до сети филиалов — система растёт вместе с вами.</p>
+          </div>
+          <div class="lcell">
+            <span class="lcell__tag mono" data-i18n="ustalik.t5">ДАННЫЕ</span>
+            <h3 data-i18n="features.f5.title">Конфиденциальность</h3>
+            <p data-i18n="features.f5.desc">Ваши коммерческие данные надёжно защищены и принадлежат только вам.</p>
+          </div>
+          <div class="lcell">
+            <span class="lcell__tag mono">24-7</span>
+            <h3 data-i18n="features.f6.title">Поддержка 24/7</h3>
+            <p data-i18n="features.f6.desc">Служба поддержки на связи круглосуточно — на узбекском и русском языках.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 8. МАРШРУТ — линия становится картой ===== -->
+    <!-- «Что это даёт вам»: обещания в выгодах владельца -->
+    <section class="promisesband">
+      <div class="frame">
+        <h3 class="promises__title" data-i18n="prom.title">Что это даёт лично вам</h3>
+        <ul class="leaders leaders--promises">
+          <li><span data-i18n="prom.p1">Быстрый старт</span><span class="leaders__dots"></span><span class="promises__gain" data-i18n="prom.g1">работаете уже на этой неделе</span></li>
+          <li><span data-i18n="prom.p2">Impro Mobile</span><span class="leaders__dots"></span><span class="promises__gain" data-i18n="prom.g2">выручка видна из дома в любой момент</span></li>
+          <li><span data-i18n="prom.p3">Автоучёт остатков</span><span class="leaders__dots"></span><span class="promises__gain" data-i18n="prom.g3">ничего не пропадает и не забывается</span></li>
+          <li><span data-i18n="prom.p4">Простой интерфейс</span><span class="leaders__dots"></span><span class="promises__gain" data-i18n="prom.g4">новый сотрудник осваивается за смену</span></li>
+          <li><span data-i18n="prom.p5">Поддержка 24/7</span><span class="leaders__dots"></span><span class="promises__gain" data-i18n="prom.g5">живые люди, по-узбекски и по-русски</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section section--warm route" id="route">
+      <div class="frame">
+        <p class="kicker mono" data-i18n="route.kicker">Глава 09 · Маршрут</p>
+        <h2 class="h2 underdrawn" data-i18n="route.title">Мы рядом — в шести городах Узбекистана</h2>
+        <div class="route__grid">
+          <div class="route__map" aria-hidden="true">
+            <svg viewBox="0 0 790 440">
+              <!-- стилизованный контур Узбекистана -->
+              <path class="mapoutline" d="M 130 30 L 265 120 L 385 110 L 465 168 L 560 195 L 640 185
+                L 700 165 L 778 245 L 700 295 L 620 310 L 570 350 L 548 420 L 490 415 L 440 375
+                L 380 340 L 300 292 L 235 232 L 150 215 L 60 240 L 20 205 L 55 130 L 95 75 Z"/>
+              <path class="drawline routepath" d="M 388 302 L 431 286 L 502 307 L 605 225 L 695 236 L 719 271"/>
+              <g class="city" style="--d:0s"><circle cx="388" cy="302" r="7"/><text x="388" y="338" text-anchor="middle" data-i18n="city.bukhara">Бухара</text></g>
+              <g class="city" style="--d:.15s"><circle cx="431" cy="286" r="7"/><text x="431" y="266" text-anchor="middle" data-i18n="city.navoi">Навои</text></g>
+              <g class="city" style="--d:.3s"><circle cx="502" cy="307" r="7"/><text x="502" y="343" text-anchor="middle" data-i18n="city.samarkand">Самарканд</text></g>
+              <g class="city" style="--d:.45s"><circle cx="605" cy="225" r="7"/><text x="605" y="203" text-anchor="middle" data-i18n="city.tashkent">Ташкент</text></g>
+              <g class="city" style="--d:.6s"><circle cx="695" cy="236" r="7"/><text x="700" y="222" text-anchor="middle" data-i18n="city.namangan">Наманган</text></g>
+              <g class="city" style="--d:.75s"><circle cx="719" cy="271" r="7"/><text x="722" y="305" text-anchor="middle" data-i18n="city.fergana">Фергана</text></g>
+            </svg>
+          </div>
+          <div class="route__text">
+            <img class="emblem" src="assets/logo.jpg" alt="Логотип Improsoft" width="92" height="92" loading="lazy">
+            <p class="lead" data-i18n="about.text1">Improsoft — команда разработчиков из Узбекистана, Казахстана и России, которая много лет специализируется на автоматизации бизнес-процессов.</p>
+            <p class="lead" data-i18n="about.text2">В Узбекистане мы работаем в Ташкенте, Самарканде, Бухаре, Намангане, Навои и Фергане: внедряем систему, обучаем персонал и сопровождаем клиентов на месте.</p>
+            <div class="hq">
+              <p class="hq__label mono" data-i18n="contacts.hq">Главный офис · Навои</p>
+              <div class="hq__row">
+                <a class="mono" href="tel:+998935222020">+998 93 522 20 20</a>
+                <a class="mono" href="tel:+998882188880">+998 88 218 88 80</a>
+                <a class="mono" href="mailto:uz@improsoft.biz">uz@improsoft.biz</a>
+              </div>
+            </div>
+            <p class="cities__label" data-i18n="route.citiesLabel">Работаем по всему Узбекистану:</p>
+            <ul class="cities">
+              <li data-i18n="city.navoi">Навои</li>
+              <li data-i18n="city.tashkent">Ташкент</li>
+              <li data-i18n="city.samarkand">Самарканд</li>
+              <li data-i18n="city.bukhara">Бухара</li>
+              <li data-i18n="city.namangan">Наманган</li>
+              <li data-i18n="city.fergana">Фергана</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 9. ЧЕТЫРЕ ДНЯ — честная последовательность ===== -->
+    <section class="section days" id="days">
+      <div class="frame">
+        <p class="kicker mono" data-i18n="days.kicker">Глава 10 · От договора до работы</p>
+        <h2 class="h2 underdrawn" data-i18n="days.title">Четыре дня — и вы работаете</h2>
+        <ol class="timeline">
+          <li>
+            <span class="timeline__num" aria-hidden="true">1</span>
+            <span class="timeline__day mono" data-i18n="days.d1">день</span>
+            <span class="timeline__what" data-i18n="days.w1">Установка и настройка под ваш бизнес</span>
+          </li>
+          <li>
+            <span class="timeline__num" aria-hidden="true">2–3</span>
+            <span class="timeline__day mono" data-i18n="days.d2">дни</span>
+            <span class="timeline__what" data-i18n="days.w2">Обучение персонала на рабочем месте</span>
+          </li>
+          <li>
+            <span class="timeline__num" aria-hidden="true">4</span>
+            <span class="timeline__day mono" data-i18n="days.d3">день</span>
+            <span class="timeline__what" data-i18n="days.w3">Вы принимаете первые заказы в Impro</span>
+          </li>
+          <li>
+            <span class="timeline__num" aria-hidden="true">∞</span>
+            <span class="timeline__day mono" data-i18n="days.d4">всегда</span>
+            <span class="timeline__what" data-i18n="days.w4">Поддержка 24/7 на узбекском и русском</span>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ===== 10. ZAYAVKA — форма-чек ===== -->
+    <!-- CTA-полоса: второй тёмный момент -->
+    <section class="ctaband ondark">
+      <div class="frame ctaband__inner">
+        <h2 class="h2" data-i18n="ctaband.title">Посмотрим вашу точку и посчитаем — бесплатно</h2>
+        <div class="ctaband__actions">
+          <a href="#zayavka" class="btn btn--light" data-i18n="ctaband.button">Оставить заявку</a>
+          <a class="ctaband__phone" href="tel:+998935222020">+998 93 522 20 20</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 11. ВОПРОСЫ И ОТВЕТЫ ===== -->
+    <section class="section faq" id="faq">
+      <div class="frame">
+        <p class="kicker mono" data-i18n="faq.kicker">Глава 11 · Вопросы и ответы</p>
+        <h2 class="h2 underdrawn" data-i18n="faq.title">Вы спросите — мы уже ответили</h2>
+        <div class="faq__list">
+          <details class="faq__item">
+            <summary><span data-i18n="faq.q1">Сколько это стоит?</span><i class="faq__chevron" aria-hidden="true"></i></summary>
+            <p data-i18n="faq.a1">Зависит от размера точки и нужных модулей. Приедем, посмотрим ваш процесс и посчитаем бесплатно — вы ничего не обязаны покупать.</p>
+          </details>
+          <details class="faq__item">
+            <summary><span data-i18n="faq.q2">Нужен ли постоянный интернет?</span><i class="faq__chevron" aria-hidden="true"></i></summary>
+            <p data-i18n="faq.a2">Нет. Impro работает офлайн, а когда связь появляется — данные сами синхронизируются с облаком.</p>
+          </details>
+          <details class="faq__item">
+            <summary><span data-i18n="faq.q3">Что будет с моим старым учётом?</span><i class="faq__chevron" aria-hidden="true"></i></summary>
+            <p data-i18n="faq.a3">Перенесём товары, цены и остатки из Excel или старой программы — ничего не потеряется.</p>
+          </details>
+          <details class="faq__item">
+            <summary><span data-i18n="faq.q4">Сколько занимает запуск?</span><i class="faq__chevron" aria-hidden="true"></i></summary>
+            <p data-i18n="faq.a4">Обычно четыре дня: установка, настройка и обучение персонала — и вы принимаете заказы.</p>
+          </details>
+          <details class="faq__item">
+            <summary><span data-i18n="faq.q5">На каком языке поддержка?</span><i class="faq__chevron" aria-hidden="true"></i></summary>
+            <p data-i18n="faq.a5">На узбекском и русском, круглосуточно. Отвечают живые специалисты в Ташкенте.</p>
+          </details>
+          <details class="faq__item">
+            <summary><span data-i18n="faq.q6">Можно посмотреть систему до покупки?</span><i class="faq__chevron" aria-hidden="true"></i></summary>
+            <p data-i18n="faq.a6">Конечно. Покажем у вас или в нашем офисе — бесплатно и без обязательств. Просто оставьте заявку ниже.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--tint zayavka" id="zayavka">
+      <div class="frame">
+        <p class="kicker mono" data-i18n="zayavka.kicker">Глава 12 · Заявка</p>
+        <h2 class="h2 underdrawn" data-i18n="zayavka.title">Покажем систему на вашем примере</h2>
+        <div class="zayavka__grid">
+          <form class="receipt" id="leadForm" method="post">
+            <p class="receipt__head mono" data-i18n="form.title">Оставить заявку</p>
+            <div class="rfield">
+              <label class="mono" for="fName" data-i18n="form.name">Ваше имя</label>
+              <input type="text" id="fName" name="name" required data-i18n-placeholder="form.namePlaceholder" placeholder="Например, Алишер" autocomplete="name">
+            </div>
+            <div class="rfield">
+              <label class="mono" for="fPhone" data-i18n="form.phone">Телефон</label>
+              <input type="tel" id="fPhone" name="phone" required placeholder="+998 __ ___ __ __" autocomplete="tel">
+            </div>
+            <div class="rfield">
+              <label class="mono" for="fBiz" data-i18n="form.business">Тип бизнеса</label>
+              <select id="fBiz" name="business">
+                <option value="cafe" data-i18n="form.businessCafe">Кафе / ресторан</option>
+                <option value="market" data-i18n="form.businessMarket">Магазин</option>
+                <option value="pharm" data-i18n="form.businessPharm">Аптека</option>
+                <option value="other" data-i18n="form.businessOther">Другое</option>
+              </select>
+            </div>
+            <div class="rfield">
+              <label class="mono" for="fMsg" data-i18n="form.message">Сообщение</label>
+              <textarea id="fMsg" name="message" rows="3" data-i18n-placeholder="form.messagePlaceholder" placeholder="Расскажите о вашем бизнесе"></textarea>
+            </div>
+            <button type="submit" class="btn btn--full" data-i18n="form.submit">Отправить заявку</button>
+            <p class="receipt__soft mono" data-i18n="form.soft">— заявка ни к чему не обязывает —</p>
+            <p class="receipt__note" data-i18n="form.note">Нажимая кнопку, вы соглашаетесь на обработку персональных данных.</p>
+            <div role="status" aria-live="polite" class="receipt__statusbox">
+              <div class="receipt__done" id="formDone" hidden>
+                <span class="sealmark" aria-hidden="true">
+                  <svg viewBox="0 0 120 120">
+                    <circle cx="60" cy="60" r="54"/>
+                    <circle cx="60" cy="60" r="40"/>
+                    <text x="60" y="66" text-anchor="middle" data-i18n="stamp.accepted">ПРИНЯТО</text>
+                  </svg>
+                </span>
+                <p class="mono" id="doneLine" data-i18n="form.success">Спасибо! Мы свяжемся с вами в ближайшее время.</p>
+              </div>
+            </div>
+          </form>
+          <div class="zayavka__side">
+            <p class="lead" data-i18n="zayavka.side">Или напишите нам напрямую — отвечаем быстро:</p>
+            <a class="btn btn--ghost btn--full" href="https://t.me/improsoft" target="_blank" rel="noopener">Telegram → @improsoft</a>
+            <a class="btn btn--ghost btn--full mono" href="tel:+998935222020">+998 93 522 20 20</a>
+            <a class="btn btn--ghost btn--full mono" href="tel:+998882188880">+998 88 218 88 80</a>
+            <p class="zayavka__note" data-i18n="zayavka.note">Приедем, покажем систему в работе и посчитаем стоимость под ваши задачи — бесплатно.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== 11. TAMOM — финал линии ===== -->
+  <footer class="tamom">
+    <div class="frame tamom__grid">
+      <div class="tamom__brand">
+        <svg class="tamom__mark" viewBox="0 0 120 90" aria-hidden="true">
+          <path class="drawknot" d="M 0 78 H 30 M 90 78 H 120 M 34 42 A 30 30 0 1 0 86 42" fill="none"/>
+          <path class="drawknot drawknot--late" d="M 60 14 V 44"/>
+        </svg>
+        <p class="wordmark">impr<svg class="wordmark__o" viewBox="0 0 36 36" aria-hidden="true"><path d="M 10 9.8 A 13 13 0 1 0 26 9.8" fill="none"/><rect x="16.4" y="2" width="3.2" height="13" rx="1.6"/></svg><span>soft</span></p>
+        <p class="tamom__tagline" data-i18n="footer.tagline">Автоматизация учёта для бизнеса любого масштаба.</p>
+      </div>
+      <nav class="tamom__nav" aria-label="Навигация в подвале" data-i18n-aria-label="a11y.footerNav">
+        <a href="#cafe" data-i18n="nav.products">Продукты</a>
+        <a href="#platform" data-i18n="nav.platform">Платформа</a>
+        <a href="#route" data-i18n="nav.about">О компании</a>
+        <a href="#zayavka" data-i18n="nav.contacts">Контакты</a>
+      </nav>
+      <div class="tamom__contacts mono">
+        <a href="tel:+998935222020">+998 93 522 20 20</a>
+        <a href="tel:+998882188880">+998 88 218 88 80</a>
+        <a href="mailto:uz@improsoft.biz">uz@improsoft.biz</a>
+        <p data-i18n="footer.address">Навои, Узбекистан</p>
+      </div>
+    </div>
+    <div class="frame tamom__bottom">
+      <p>© <span id="year">2026</span> Improsoft · <span data-i18n="footer.rights">Все права защищены.</span></p>
+      <p class="mono tamom__colophon">Chizilgan Toshkentda · Нарисовано в Ташкенте · Drawn in Tashkent</p>
+    </div>
+  </footer>
+
+  <!-- Липкая панель: звонок + Telegram (мобильные) -->
+  <div class="stickybar" id="stickybar">
+    <a class="stickybar__btn" href="tel:+998935222020" data-i18n="sticky.call">Позвонить</a>
+    <a class="stickybar__btn stickybar__btn--tg" href="https://t.me/improsoft" target="_blank" rel="noopener">Telegram</a>
+  </div>
+
+  <script src="js/i18n.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

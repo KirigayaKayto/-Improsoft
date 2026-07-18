@@ -1,0 +1,7 @@
+# локальные настройки Claude Code
+.claude/settings.local.json
+
+# временные файлы
+_*.html
+Thumbs.db
+.DS_Store
