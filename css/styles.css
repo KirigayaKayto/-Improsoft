@@ -362,19 +362,19 @@ svg { display: block; }
 .daftar__paper {
   background: var(--paper);
   border: 1px solid var(--reed);
-  padding: 30px 26px 18px;
-  background-image: repeating-linear-gradient(
-    to bottom, transparent 0 35px, var(--reed) 35px 36px);
+  padding: 24px 26px 14px;
 }
+/* линейка тетради — граница самой записи: не пересекает текст при переносах */
 .dentry {
   display: block;
   width: 100%;
   text-align: left;
   background: none;
   border: none;
+  border-bottom: 1px solid var(--reed);
   cursor: pointer;
-  padding: 6px 2px;
-  min-height: 36px;
+  padding: 11px 2px;
+  min-height: 46px;
 }
 .dentry__hand {
   font-family: var(--font-hand);
@@ -584,6 +584,7 @@ svg { display: block; }
   margin-bottom: 12px;
   font-size: 14px;
 }
+.batch__cell .mono:first-child, .batch__ok { white-space: nowrap; }
 .batch__cell--warn { border-color: var(--green-deep); }
 .batch__ok { color: var(--green-deep); font-size: 12px; }
 .batch__cell--warn .batch__ok { color: var(--green-deep); }
@@ -1114,7 +1115,7 @@ html[lang="uz"] .sealmark text { font-size: 10px; letter-spacing: 0; }
 .bigword__word {
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: clamp(64px, 15vw, 208px);
+  font-size: clamp(46px, 15vw, 208px);
   line-height: 1;
   letter-spacing: -0.02em;
   color: var(--green);
@@ -1328,14 +1329,30 @@ html[lang="uz"] .sealmark text { font-size: 10px; letter-spacing: 0; }
   .pos__items { grid-template-columns: 1fr 1fr; }
   .promises__gain { max-width: none; }
   .promisesband { padding-bottom: 68px; }
-  .city text { font-size: 20px; }
-  .city circle { r: 11px; }
-  .routepath { stroke-width: 5; }
+  /* подписи городов на маленькой карте нечитаемы — их заменяют фишки ниже */
+  .city text { display: none; }
+  .city circle { r: 13px; }
+  .routepath { stroke-width: 6; }
+  .mapoutline { stroke-width: 2.5; }
   .tamom__grid { grid-template-columns: 1fr; gap: 30px; }
   .tamom__bottom { flex-direction: column; gap: 6px; }
 
   .stickybar { display: grid; }
   body { padding-bottom: calc(52px + env(safe-area-inset-bottom)); } /* место под липкую панель */
+
+  /* --- мобильная полировка --- */
+  .hero__title { text-wrap: wrap; } /* без balance: не оставляет одинокое первое слово */
+  .dentry__hand { font-size: 19px; line-height: 1.4; }
+  .daftar__all { width: 100%; }
+  .pos--screen { padding: 18px 14px 12px; }
+  .pos__items { gap: 8px; }
+  .pos__item { min-height: 60px; padding: 12px; }
+  .pos__item b { font-size: 13px; }
+  .posreceipt__total { font-size: 17px; }
+  /* наклоны бумаги на узком экране мешают — выпрямляем */
+  .ticket, .shelf, .batch, .posreceipt { transform: none; }
+  .bigword { padding: 64px 0 56px; }
+  .daycard__art { max-width: 210px; }
 
   .stamp { padding: 6px 8px; font-size: 11.5px; }
   .stamp--tg { display: none; } /* на мобильных Telegram живёт в липкой панели */
