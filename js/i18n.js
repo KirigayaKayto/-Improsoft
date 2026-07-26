@@ -23,7 +23,7 @@ const I18N = {
     "hero2.sub": "Кассы и учёт для кафе, магазинов и аптек. Настроим за четыре дня, обучим персонал и останемся на связи — по-узбекски и по-русски.",
     "hero2.cta1": "Посмотреть демо — бесплатно",
     "hero2.cta2": "Попробовать кассу прямо здесь ↓",
-    "hero.stat1": "страны присутствия",
+    "hero.stat1": "продукта платформы",
     "hero.stat2": "городов Узбекистана",
     "hero.stat3": "дня до запуска под ключ",
 
@@ -117,7 +117,7 @@ const I18N = {
 
     "route.kicker": "Глава 09 · Маршрут",
     "route.title": "Мы рядом — в шести городах Узбекистана",
-    "about.text1": "Improsoft — команда разработчиков из Узбекистана, Казахстана и России, которая много лет специализируется на автоматизации бизнес-процессов.",
+    "about.text1": "Improsoft — команда разработчиков из Узбекистана. Мы много лет занимаемся автоматизацией бизнеса.",
     "about.text2": "В Узбекистане мы работаем в Ташкенте, Самарканде, Бухаре, Намангане, Навои и Фергане: внедряем систему, обучаем персонал и сопровождаем клиентов на месте.",
     "contacts.hq": "Главный офис · Навои",
     "route.citiesLabel": "Работаем по всему Узбекистану:",
@@ -246,7 +246,7 @@ const I18N = {
     "hero2.sub": "Kafe, do'kon va dorixonalar uchun kassa va hisob. To'rt kunda sozlab, xodimlarni o'qitamiz va doim aloqada qolamiz — o'zbek va rus tillarida.",
     "hero2.cta1": "Demo ko'rish — bepul",
     "hero2.cta2": "Kassani shu yerda sinab ko'ring ↓",
-    "hero.stat1": "mamlakatda faoliyat yuritamiz",
+    "hero.stat1": "ta platforma mahsuloti",
     "hero.stat2": "shahar O'zbekiston bo'ylab",
     "hero.stat3": "kunda ishga tushiramiz",
 
@@ -340,7 +340,7 @@ const I18N = {
 
     "route.kicker": "09-bob · Yo'nalish",
     "route.title": "Biz yaqinmiz — O'zbekistonning olti shahrida",
-    "about.text1": "Improsoft — O'zbekiston, Qozog'iston va Rossiyadan bo'lgan dasturchilar jamoasi bo'lib, ko'p yillardan buyon biznes jarayonlarini avtomatlashtirishga ixtisoslashgan.",
+    "about.text1": "Improsoft — o'zbekistonlik dasturchilar jamoasi. Biz ko'p yillardan buyon biznesni avtomatlashtirish bilan shug'ullanamiz.",
     "about.text2": "O'zbekistonda biz Toshkent, Samarqand, Buxoro, Namangan, Navoiy va Farg'onada faoliyat yuritamiz: tizimni joriy etamiz, xodimlarni o'qitamiz va mijozlarni joyiga borib qo'llab-quvvatlaymiz.",
     "contacts.hq": "Bosh ofis · Navoiy",
     "route.citiesLabel": "Butun O'zbekiston bo'ylab ishlaymiz:",
@@ -469,7 +469,7 @@ const I18N = {
     "hero2.sub": "Tills and back office for cafes, shops and pharmacies. Set up in four days, staff trained — and we stay in touch, in Uzbek and Russian.",
     "hero2.cta1": "See a demo — it's free",
     "hero2.cta2": "Try the till right here ↓",
-    "hero.stat1": "countries of operation",
+    "hero.stat1": "platform products",
     "hero.stat2": "cities across Uzbekistan",
     "hero.stat3": "days to a turnkey launch",
 
@@ -563,7 +563,7 @@ const I18N = {
 
     "route.kicker": "Chapter 09 · The route",
     "route.title": "We're nearby — in six cities across Uzbekistan",
-    "about.text1": "Improsoft is a team of developers from Uzbekistan, Kazakhstan and Russia with many years of experience in business process automation.",
+    "about.text1": "Improsoft is a team of developers from Uzbekistan. We have been automating businesses for many years.",
     "about.text2": "In Uzbekistan we operate in Tashkent, Samarkand, Bukhara, Namangan, Navoi and Fergana: we implement the system, train your staff and support clients on site.",
     "contacts.hq": "Head office · Navoi",
     "route.citiesLabel": "We work across Uzbekistan:",
