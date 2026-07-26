@@ -453,6 +453,16 @@ svg { display: block; }
   margin-top: 4px;
   color: var(--green-deep);
 }
+/* мобильный клон строки журнала: печатается прямо под рукописной записью */
+.lrow--inline {
+  background: var(--plaster);
+  border: 1px solid var(--reed);
+  border-left: 3px solid var(--green);
+  padding: 9px 12px;
+  margin: 4px 0 10px;
+  font-size: 14px;
+}
+.lrow--inline.lrow--total { border-top: 1px solid var(--reed); }
 .daftar__all { margin-top: 26px; }
 
 /* ============ Главы продуктов ============ */
@@ -625,20 +635,6 @@ svg { display: block; }
   font-size: 28px;
   fill: var(--plaster);
 }
-.dome__satellites {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-top: 30px;
-}
-.satellite {
-  border: 1px solid color-mix(in srgb, var(--plaster) 30%, transparent);
-  background: rgba(246, 248, 244, .05);
-  padding: 16px 18px;
-  font-size: 13.5px;
-}
-.satellite b { display: block; font-family: var(--font-mono); font-weight: 400; color: var(--green-soft); margin-bottom: 6px; }
-.satellite i { font-style: normal; color: color-mix(in srgb, var(--plaster) 80%, transparent); }
 
 /* ============ 7. Усталик — таблица без иконок ============ */
 .ledgertable {
@@ -1101,10 +1097,76 @@ html[lang="uz"] .sealmark text { font-size: 10px; letter-spacing: 0; }
   border-color: #3c473f;
   color: var(--plaster);
 }
-.pos--screen .pos__item:hover { border-color: var(--green); background: #2e342e; }
+.pos--screen .pos__item:hover {
+  border-color: var(--green);
+  background: #2e342e;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .3);
+}
 .pos--screen .pos__item:active { background: #232823; }
 .pos--screen .pos__item b { color: var(--green); }
 .pos--screen .pos__hint { color: color-mix(in srgb, var(--plaster) 42%, transparent); }
+
+/* бейдж количества на кнопке товара: фидбек в точке касания */
+.pos__item { position: relative; }
+.pos__count {
+  position: absolute;
+  top: -10px; right: -8px;
+  min-width: 26px; height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-style: normal;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background: var(--green);
+  color: #fff;
+  border-radius: 999px;
+  padding: 0 6px;
+  animation: popin .18s ease;
+  pointer-events: none;
+}
+@keyframes popin {
+  from { transform: scale(.4); }
+  to { transform: scale(1); }
+}
+
+/* плавающий итог демо-кассы (мобильные/планшеты): результат тапа всегда виден */
+.posbar {
+  position: fixed;
+  left: 12px; right: 12px;
+  bottom: 12px;
+  z-index: 95;
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  background: var(--ink);
+  color: var(--plaster);
+  border: none;
+  border-radius: 12px;
+  padding: 13px 18px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, .35);
+  cursor: pointer;
+  animation: popin .18s ease;
+}
+.posbar.is-on { display: flex; }
+.posbar b { color: var(--green-soft); font-weight: 400; }
+.posbar__go { color: var(--green-soft); white-space: nowrap; }
+@media (min-width: 1081px) { .posbar { display: none !important; } }
+@media (max-width: 680px) {
+  .posbar { bottom: calc(60px + env(safe-area-inset-bottom)); }
+}
+
+/* «отрыв» чека при оплате */
+.posreceipt.is-paid { animation: tear .45s ease; }
+@keyframes tear {
+  0% { transform: rotate(.8deg) translateY(0); }
+  35% { transform: rotate(2.6deg) translateY(7px); }
+  65% { transform: rotate(-.5deg) translateY(-4px); }
+  100% { transform: rotate(.8deg) translateY(0); }
+}
 
 /* ============ Гигантское слово ============ */
 .bigword {
@@ -1134,7 +1196,7 @@ html[lang="uz"] .sealmark text { font-size: 10px; letter-spacing: 0; }
   position: absolute;
   top: -50px; right: -80px;
   width: 400px;
-  opacity: .06;
+  opacity: .09;
   pointer-events: none;
 }
 .chapter--flip .watermark { right: auto; left: -80px; }
@@ -1312,8 +1374,9 @@ html[lang="uz"] .sealmark text { font-size: 10px; letter-spacing: 0; }
   .hero__stats { flex-direction: row; flex-wrap: wrap; gap: 18px; }
   .hero__stats li { flex-direction: column; gap: 2px; }
 
+  /* на мобильном журнал не отдельная колонка: строка печатается прямо под записью */
   .daftar__board { grid-template-columns: 1fr; }
-  .daftar__threshold { height: 3px; width: 100%; }
+  .daftar__threshold, .daftar__ledger { display: none; }
 
   .ledgertable { grid-template-columns: 1fr; }
   .timeline { grid-template-columns: 1fr; gap: 0; }
@@ -1325,7 +1388,6 @@ html[lang="uz"] .sealmark text { font-size: 10px; letter-spacing: 0; }
   .timeline li::before { top: 0; left: -8px; width: 14px; height: 3px; }
 
   .tags { grid-template-columns: 1fr; }
-  .dome__satellites { grid-template-columns: 1fr; }
   .pos__items { grid-template-columns: 1fr 1fr; }
   .promises__gain { max-width: none; }
   .promisesband { padding-bottom: 68px; }
@@ -1376,6 +1438,8 @@ html[lang="uz"] .sealmark text { font-size: 10px; letter-spacing: 0; }
   .steam { animation: none; }
   .prow { animation: none; }
   .faq__chevron { transition: none; }
+  .pos__count, .posbar { animation: none; }
+  .posreceipt.is-paid { animation: none; }
 }
 
 /* без JS вся графика дорисована и видима

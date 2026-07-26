@@ -136,17 +136,41 @@
   var entries = document.querySelectorAll(".dentry");
   var doneCount = 0;
 
+  var mobileDaftar = window.matchMedia("(max-width: 680px)");
+
+  function inlineClone(row, after) {
+    // на мобильном журнал скрыт — строка печатается прямо в дафтаре
+    var clone = row.cloneNode(true);
+    clone.hidden = false;
+    clone.classList.add("lrow--inline");
+    after.insertAdjacentElement("afterend", clone);
+  }
+
   function reconcile(entry) {
     if (entry.classList.contains("is-done")) return;
     entry.classList.add("is-done");
     entry.setAttribute("aria-disabled", "true");
     document.getElementById("daftarEmpty").hidden = true;
-    var row = document.querySelector('.lrow[data-row="' + entry.getAttribute("data-row") + '"]');
-    if (row) row.hidden = false;
+    var row = document.querySelector('.daftar__ledger .lrow[data-row="' + entry.getAttribute("data-row") + '"]');
+    if (row) {
+      row.hidden = false;
+      if (mobileDaftar.matches) inlineClone(row, entry);
+    }
     doneCount++;
     if (doneCount === entries.length) {
       var total = document.getElementById("daftarTotal");
-      setTimeout(function () { total.hidden = false; }, 350);
+      setTimeout(function () {
+        total.hidden = false;
+        if (mobileDaftar.matches) {
+          var paper = document.getElementById("daftarPaper");
+          var note = paper.querySelector(".daftar__papernote");
+          var clone = total.cloneNode(true);
+          clone.hidden = false;
+          clone.removeAttribute("id");
+          clone.classList.add("lrow--inline");
+          paper.insertBefore(clone, note);
+        }
+      }, 350);
       var allBtn = document.getElementById("daftarAll");
       allBtn.disabled = true;
       allBtn.style.opacity = ".4";
@@ -292,7 +316,37 @@
     document.getElementById("posTotal").textContent = fmtSum(total);
     document.getElementById("posEmpty").hidden = posOrder.length > 0;
     document.getElementById("posPay").disabled = total === 0;
+    updatePosBar(total);
     return total;
+  }
+
+  /* плавающий итог: виден, когда чек за экраном, а заказ не пуст */
+  var posBar = document.getElementById("posBar");
+  var receiptInView = true;
+
+  function updatePosBar(total) {
+    if (!posBar) return;
+    if (total === undefined) {
+      total = 0;
+      posOrder.forEach(function (it) { total += it.price * it.qty; });
+    }
+    document.getElementById("posBarSum").textContent = fmtSum(total);
+    posBar.classList.toggle("is-on", total > 0 && !receiptInView);
+  }
+
+  if (posBar && posRowsEl) {
+    if ("IntersectionObserver" in window) {
+      var receiptIO = new IntersectionObserver(function (es) {
+        es.forEach(function (e) {
+          receiptInView = e.isIntersecting;
+          updatePosBar();
+        });
+      }, { threshold: 0.3 });
+      receiptIO.observe(document.querySelector(".posreceipt"));
+    }
+    posBar.addEventListener("click", function () {
+      document.querySelector(".posreceipt").scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "center" });
+    });
   }
 
   if (posRowsEl) {
@@ -304,7 +358,21 @@
         if (found) {
           found.qty++;
         } else {
-          posOrder.push({ key: key, price: parseInt(btn.getAttribute("data-price"), 10), qty: 1 });
+          found = { key: key, price: parseInt(btn.getAttribute("data-price"), 10), qty: 1 };
+          posOrder.push(found);
+        }
+        // бейдж ×N на самой кнопке: обратная связь в точке касания
+        var badge = btn.querySelector(".pos__count");
+        if (!badge) {
+          badge = document.createElement("i");
+          badge.className = "pos__count";
+          btn.appendChild(badge);
+        }
+        badge.textContent = "×" + found.qty;
+        if (!reducedMotion) {
+          badge.style.animation = "none";
+          void badge.offsetWidth;
+          badge.style.animation = "";
         }
         document.getElementById("posDone").hidden = true;
         renderPosRows(I18N[currentLang]);
@@ -319,6 +387,14 @@
       renderPosRows(I18N[currentLang]);
       document.getElementById("posRevenue").textContent = fmtSum(posShift);
       document.getElementById("posDone").hidden = false;
+      // чек «отрывается», бейджи очищаются
+      document.querySelectorAll(".pos__count").forEach(function (b) { b.remove(); });
+      if (!reducedMotion) {
+        var receipt = document.querySelector(".posreceipt");
+        receipt.classList.remove("is-paid");
+        void receipt.offsetWidth;
+        receipt.classList.add("is-paid");
+      }
     });
   }
 
