@@ -157,6 +157,7 @@ const I18N = {
     "form.submit": "Отправить заявку",
     "form.note": "Нажимая кнопку, вы соглашаетесь на обработку персональных данных.",
     "form.success": "Спасибо! Мы свяжемся с вами в ближайшее время.",
+    "form.error": "Не получилось отправить. Напишите нам в Telegram — ответим быстро:",
     "stamp.accepted": "ПРИНЯТО",
 
     "sticky.call": "Позвонить",
@@ -380,6 +381,7 @@ const I18N = {
     "form.submit": "So'rov yuborish",
     "form.note": "Tugmani bosish orqali shaxsiy ma'lumotlarni qayta ishlashga rozilik bildirasiz.",
     "form.success": "Rahmat! Tez orada siz bilan bog'lanamiz.",
+    "form.error": "Yuborib bo'lmadi. Bizga Telegramda yozing — tez javob beramiz:",
     "stamp.accepted": "QABUL QILINDI",
 
     "sticky.call": "Qo'ng'iroq",
@@ -603,6 +605,7 @@ const I18N = {
     "form.submit": "Send request",
     "form.note": "By clicking the button, you consent to the processing of your personal data.",
     "form.success": "Thank you! We will contact you shortly.",
+    "form.error": "Couldn't send your request. Message us on Telegram — we reply fast:",
     "stamp.accepted": "RECEIVED",
 
     "sticky.call": "Call us",

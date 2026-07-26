@@ -1335,6 +1335,28 @@ html[lang="uz"] .sealmark text { font-size: 10px; letter-spacing: 0; }
   max-width: 62ch;
 }
 
+/* honeypot: поле-ловушка для ботов, людям не видно */
+.hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px; height: 1px;
+  opacity: 0;
+}
+
+/* ошибка отправки формы */
+.receipt__err {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--reed);
+  font-size: 13.5px;
+  color: #a3392e;
+}
+.receipt__err a {
+  color: var(--green-deep);
+  font-weight: 600;
+  border-bottom: 1.5px solid var(--green);
+}
+
 /* мягкая строка формы */
 .receipt__soft {
   font-size: 12px;

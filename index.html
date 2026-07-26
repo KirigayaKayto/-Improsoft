@@ -652,7 +652,7 @@
         <p class="kicker mono" data-i18n="zayavka.kicker">Глава 12 · Заявка</p>
         <h2 class="h2 underdrawn" data-i18n="zayavka.title">Покажем систему на вашем примере</h2>
         <div class="zayavka__grid">
-          <form class="receipt" id="leadForm" method="post">
+          <form class="receipt" id="leadForm" method="post" action="send.php">
             <p class="receipt__head mono" data-i18n="form.title">Оставить заявку</p>
             <div class="rfield">
               <label class="mono" for="fName" data-i18n="form.name">Ваше имя</label>
@@ -675,10 +675,12 @@
               <label class="mono" for="fMsg" data-i18n="form.message">Сообщение</label>
               <textarea id="fMsg" name="message" rows="3" data-i18n-placeholder="form.messagePlaceholder" placeholder="Расскажите о вашем бизнесе"></textarea>
             </div>
+            <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
             <button type="submit" class="btn btn--full" data-i18n="form.submit">Отправить заявку</button>
             <p class="receipt__soft mono" data-i18n="form.soft">— заявка ни к чему не обязывает —</p>
             <p class="receipt__note" data-i18n="form.note">Нажимая кнопку, вы соглашаетесь на обработку персональных данных.</p>
             <div role="status" aria-live="polite" class="receipt__statusbox">
+              <p class="receipt__err" id="formErr" hidden><span data-i18n="form.error">Не получилось отправить. Напишите нам в Telegram — ответим быстро:</span> <a href="https://t.me/improsoftsupport" target="_blank" rel="noopener">@improsoftsupport</a></p>
               <div class="receipt__done" id="formDone" hidden>
                 <span class="sealmark" aria-hidden="true">
                   <svg viewBox="0 0 120 120">

@@ -252,20 +252,37 @@
     });
     if (!valid) return;
 
-    // TODO: подключите отправку на бэкенд, Telegram-бота или сервис форм:
-    // fetch("/api/lead", { method: "POST", body: new FormData(form) })
-    done.hidden = false;
-    if (!reducedMotion) {
-      var line = document.getElementById("doneLine");
-      line.style.animation = "printrow .9s ease";
-    }
-    form.querySelector("button[type=submit]").disabled = true;
+    var submitBtn = form.querySelector("button[type=submit]");
+    var errEl = document.getElementById("formErr");
+    submitBtn.disabled = true;
+    errEl.hidden = true;
 
-    setTimeout(function () {
-      form.reset();
-      done.hidden = true;
-      form.querySelector("button[type=submit]").disabled = false;
-    }, 8000);
+    var data = new FormData(form);
+    data.append("lang", currentLang);
+
+    fetch(form.getAttribute("action") || "send.php", {
+      method: "POST",
+      body: data,
+      headers: { "X-Requested-With": "fetch" }
+    }).then(function (r) {
+      return r.json();
+    }).then(function (j) {
+      if (!j.ok) throw new Error("send failed");
+      done.hidden = false;
+      if (!reducedMotion) {
+        var line = document.getElementById("doneLine");
+        line.style.animation = "printrow .9s ease";
+      }
+      setTimeout(function () {
+        form.reset();
+        done.hidden = true;
+        submitBtn.disabled = false;
+      }, 8000);
+    }).catch(function () {
+      // сервер недоступен (например, превью без PHP) — предлагаем Telegram
+      submitBtn.disabled = false;
+      errEl.hidden = false;
+    });
   });
 
   [form.elements.name, form.elements.phone].forEach(function (f) {
