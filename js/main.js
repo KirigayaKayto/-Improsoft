@@ -51,6 +51,9 @@
     // даты партий (Pharm) считаются от сегодняшнего дня по шаблону pharm.expiry с {d}
     renderPharmDates(dict, lang);
 
+    // способ оплаты в строке «Чек закрыт» — на новом языке
+    if (posPaidMethod) { var pmEl = document.getElementById("posMethod"); if (pmEl) pmEl.textContent = methodLabel(posPaidMethod); }
+
     // строки мини-чека тоже перепечатываем на новом языке
     if (typeof posOrder !== "undefined" && posOrder && posOrder.length) renderPosRows(dict);
 
@@ -70,6 +73,13 @@
       var mm = ("0" + (d.getMonth() + 1)).slice(-2);
       el.textContent = dict["pharm.expiry"].replace("{d}", mm + (lang === "en" ? "/" : ".") + d.getFullYear());
     });
+  }
+
+  /* подпись способа оплаты по ключу чипа (Наличные / Payme / Click / Uzum Bank / В долг) */
+  var posPaidMethod = "";
+  function methodLabel(key) {
+    var b = document.querySelector('.pmethod[data-method="' + key + '"]');
+    return b ? b.textContent : "";
   }
 
   /* сменить ключ элемента: applyLang читает data-i18n, поэтому подпись переживёт смену языка */
@@ -510,6 +520,15 @@
   }
 
   if (posRowsEl) {
+    // способ оплаты: наличные / Payme / Click / Uzum Bank / в долг
+    var posMethod = "cash";
+    document.querySelectorAll(".pmethod").forEach(function (b) {
+      b.addEventListener("click", function () {
+        posMethod = b.getAttribute("data-method");
+        document.querySelectorAll(".pmethod").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+      });
+    });
+
     document.querySelectorAll(".pos__item").forEach(function (btn) {
       btn.addEventListener("click", function () {
         var key = btn.getAttribute("data-name");
@@ -560,6 +579,8 @@
       renderPosRows(I18N[currentLang]);
       document.getElementById("posRevenue").textContent = fmtSum(posShift);
       document.getElementById("posCount").textContent = String(posCount);
+      posPaidMethod = posMethod;
+      document.getElementById("posMethod").textContent = methodLabel(posPaidMethod);
       document.getElementById("posDone").hidden = false;
       // чек «отрывается», бейджи очищаются, следующий номер допечатывается после отрыва
       document.querySelectorAll(".pos__count").forEach(function (b) { b.remove(); });

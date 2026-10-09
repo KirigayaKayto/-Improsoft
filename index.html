@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title data-i18n="meta.title">Improsoft — автоматизация бизнеса в Узбекистане</title>
-  <meta name="description" data-i18n-content="meta.description" content="Improsoft — готовые решения для автоматизации кафе, магазинов и аптек в Узбекистане. Платформа Impro: касса, склад, отчёты. Внедрение за четыре дня.">
+  <meta name="description" data-i18n-content="meta.description" content="Improsoft — готовые решения для автоматизации кафе, магазинов и аптек в Узбекистане. Платформа Impro: касса, склад, отчёты, фискальные чеки, оплата Payme, Click, Uzum Bank. Внедрение за четыре дня.">
   <!-- TODO: перед публикацией замените improsoft.uz на рабочий домен сайта -->
   <link rel="canonical" href="https://improsoft.uz/">
   <meta property="og:type" content="website">
@@ -193,14 +193,52 @@
               <span class="posreceipt__dots"></span>
               <span class="mono" id="posTotal">0</span>
             </div>
-            <button class="posreceipt__clear mono" id="posClear" type="button" hidden data-i18n="try.clear">— очистить чек —</button>
+            <div class="posreceipt__methods" role="group" aria-label="Способ оплаты" data-i18n-aria-label="try.methodLabel">
+              <button type="button" class="pmethod mono" data-method="cash" aria-pressed="true" data-i18n="try.mCash">Наличные</button>
+              <button type="button" class="pmethod mono" data-method="payme" aria-pressed="false">Payme</button>
+              <button type="button" class="pmethod mono" data-method="click" aria-pressed="false">Click</button>
+              <button type="button" class="pmethod mono" data-method="uzum" aria-pressed="false">Uzum Bank</button>
+              <button type="button" class="pmethod mono" data-method="debt" aria-pressed="false" data-i18n="try.mDebt">В долг</button>
+            </div>
+            <button class="posreceipt__clear mono" id="posClear" type="button" hidden data-i18n="try.clear">— очистить чек —</button>
             <button class="btn btn--full" id="posPay" type="button" disabled data-i18n="try.pay">Оплатить</button>
             <div role="status" class="posreceipt__status">
-              <p class="posreceipt__done mono" id="posDone" hidden><span data-i18n="try.paid">Оплачено ✓ Выручка смены:</span> <b id="posRevenue">0</b> <span data-i18n="try.sum">сум</span> <span class="posreceipt__cnt">· <span data-i18n="try.receipts">чеков</span>: <span id="posCount">0</span></span></p>
+              <p class="posreceipt__done mono" id="posDone" hidden><span data-i18n="try.paid">Чек закрыт ✓</span> · <span id="posMethod">Наличные</span> · <span data-i18n="try.shiftRevenue">Продажи за смену:</span> <b id="posRevenue">0</b> <span data-i18n="try.sum">сум</span> <span class="posreceipt__cnt">· <span data-i18n="try.receipts">чеков</span>: <span id="posCount">0</span></span></p>
             </div>
           </div>
         </div>
         <p class="try__note" data-i18n="try.note">Это упрощённая модель кассы. В настоящей Impro Cafe есть ещё кухня, склад и отчёты.</p>
+      </div>
+    </section>
+
+    <!-- ===== 2b. ЧТО УМЕЕТ НАСТОЯЩАЯ КАССА: фискальные чеки, оплаты, долг, DMED ===== -->
+    <section class="section section--tint rules" id="rules">
+      <div class="frame">
+        <p class="kicker mono" data-i18n="rules.kicker">Глава 02 · продолжение</p>
+        <h2 class="h2 underdrawn" data-i18n="rules.title">Фискальные чеки, Payme, Click, Uzum Bank — и даже в долг</h2>
+        <p class="lead" data-i18n="rules.sub">А вот что умеет настоящая касса Impro.</p>
+        <div class="ledgertable ledgertable--4">
+          <div class="lcell">
+            <span class="lcell__tag mono" data-i18n="rules.t1">ЧЕКИ</span>
+            <h3 data-i18n="rules.h1">Фискальные чеки</h3>
+            <p data-i18n="rules.d1">Касса Impro выдаёт фискальные чеки.</p>
+          </div>
+          <div class="lcell">
+            <span class="lcell__tag mono" data-i18n="rules.t2">ОПЛАТА</span>
+            <h3 data-i18n="rules.h2">Payme, Click, Uzum Bank</h3>
+            <p data-i18n="rules.d2">Покупатель платит как привык: наличными, через Payme, Click или Uzum Bank.</p>
+          </div>
+          <div class="lcell">
+            <span class="lcell__tag mono" data-i18n="rules.t3">ДОЛГ</span>
+            <h3 data-i18n="rules.h3">Продажа в долг</h3>
+            <p data-i18n="rules.d3">Постоянному покупателю можно отпустить в долг — Impro запомнит, кто и сколько должен.</p>
+          </div>
+          <div class="lcell">
+            <span class="lcell__tag mono" data-i18n="rules.t4">АПТЕКИ</span>
+            <h3 data-i18n="rules.h4">Интеграция с DMED</h3>
+            <p data-i18n="rules.d4">Impro Pharm интегрирован с DMED.</p>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -242,6 +280,7 @@
             <li><span data-i18n="products.cafe.f2">Кухонный экран заказов</span><span class="leaders__dots"></span><span class="leaders__tick mono">✓</span></li>
             <li><span data-i18n="products.cafe.f3">Калькуляция блюд и склад</span><span class="leaders__dots"></span><span class="leaders__tick mono">✓</span></li>
             <li><span data-i18n="products.cafe.f4">Отчёты по выручке и персоналу</span><span class="leaders__dots"></span><span class="leaders__tick mono">✓</span></li>
+            <li><span data-i18n="products.cafe.f5">Фискальные чеки, оплата Payme, Click, Uzum Bank и в долг</span><span class="leaders__dots"></span><span class="leaders__tick mono">✓</span></li>
           </ul>
           <a href="#zayavka" class="linklead" data-product="cafe" data-i18n="chap.more">Подробнее →</a>
         </div>
@@ -309,6 +348,8 @@
             <span class="tag"><i data-i18n="products.market.f2">Учёт товаров и инвентаризация</i><b class="mono">02</b></span>
             <span class="tag"><i data-i18n="products.market.f3">Ценники и скидочные акции</i><b class="mono">03</b></span>
             <span class="tag"><i data-i18n="products.market.f4">Аналитика продаж в реальном времени</i><b class="mono">04</b></span>
+            <span class="tag"><i data-i18n="products.market.f5">Фискальные чеки</i><b class="mono">05</b></span>
+            <span class="tag"><i data-i18n="products.market.f6">Оплата Payme, Click, Uzum Bank и продажа в долг</i><b class="mono">06</b></span>
           </div>
           <a href="#zayavka" class="linklead" data-product="market" data-i18n="chap.more">Подробнее →</a>
         </div>
@@ -349,6 +390,7 @@
             <li><span data-i18n="products.pharm.f2">Контроль сроков годности</span><span class="leaders__dots"></span><span class="leaders__tick mono">✓</span></li>
             <li><span data-i18n="products.pharm.f3">Интеграция со справочниками</span><span class="leaders__dots"></span><span class="leaders__tick mono">✓</span></li>
             <li><span data-i18n="products.pharm.f4">Отчётность для контролирующих органов</span><span class="leaders__dots"></span><span class="leaders__tick mono">✓</span></li>
+            <li><span data-i18n="products.pharm.f5">Интеграция с DMED</span><span class="leaders__dots"></span><span class="leaders__tick mono">✓</span></li>
           </ul>
           <a href="#zayavka" class="linklead" data-product="pharm" data-i18n="chap.more">Подробнее →</a>
         </div>
@@ -649,6 +691,10 @@
           <details class="faq__item">
             <summary><span data-i18n="faq.q6">С чего начать?</span><i class="faq__chevron" aria-hidden="true"></i></summary>
             <p data-i18n="faq.a6">Оставьте заявку или напишите в Telegram. Уточним задачи, посчитаем стоимость и назначим день установки.</p>
+          </details>
+          <details class="faq__item">
+            <summary><span data-i18n="faq.q7">Чеки фискальные? Какие способы оплаты есть?</span><i class="faq__chevron" aria-hidden="true"></i></summary>
+            <p data-i18n="faq.a7">Да, касса Impro выдаёт фискальные чеки. Оплата — наличными, через Payme, Click и Uzum Bank, а постоянным покупателям можно отпустить в долг: система запомнит, кто и сколько должен.</p>
           </details>
         </div>
       </div>

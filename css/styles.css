@@ -259,7 +259,7 @@ svg { display: block; }
 .btn:hover { background: var(--deep); border-color: var(--deep); }
 .btn:active { transform: translateY(1px); }
 /* тач-гигиена: без задержки двойного тапа, серой вспышки и выделения текста при долгом нажатии */
-.btn, .dentry, .pos__item, .stamp, .posbar, .faq__item summary, .prow__minus, .posreceipt__clear, .ticket__state, .shelf {
+.btn, .dentry, .pos__item, .stamp, .posbar, .faq__item summary, .prow__minus, .posreceipt__clear, .pmethod, .ticket__state, .shelf {
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
 }
@@ -720,6 +720,9 @@ svg { display: block; }
   margin-bottom: 8px;
 }
 .lcell p { font-size: 14.5px; color: color-mix(in srgb, var(--ink) 72%, var(--plaster)); }
+/* «Что умеет настоящая касса»: четыре ячейки в ряд */
+.ledgertable--4 { grid-template-columns: repeat(4, 1fr); }
+.rules .h2 { max-width: 30ch; }
 
 /* ============ 8. Маршрут ============ */
 .route__grid {
@@ -1141,6 +1144,25 @@ html[lang="uz"] .sealmark text { font-size: 10px; letter-spacing: 0; }
   cursor: pointer;
 }
 .posreceipt__clear:hover { opacity: 1; }
+/* способ оплаты: чипы-штампы, как переключатель языка */
+.posreceipt__methods { display: flex; flex-wrap: wrap; gap: 6px; margin: -6px 0 14px; }
+.pmethod {
+  position: relative;
+  font-size: 11.5px;
+  line-height: 1;
+  padding: 7px 9px;
+  border: 1px solid var(--reed);
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  border-radius: 0;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: background .15s ease, color .15s ease, border-color .15s ease;
+}
+@media (hover: hover) { .pmethod:hover { border-color: var(--green-deep); color: var(--green-deep); } }
+.pmethod[aria-pressed="true"] { background: var(--green-deep); border-color: var(--green-deep); color: var(--plaster); }
+.pmethod::after { content: ""; position: absolute; top: -3px; right: -3px; bottom: -3px; left: -3px; } /* зона нажатия чуть больше чипа; при переносе на два ряда зоны не пересекаются */
 #posNo.is-new { animation: printrow .4s ease; }
 .posreceipt__cnt { white-space: nowrap; }
 .posreceipt__total {
@@ -1531,6 +1553,7 @@ html[lang="uz"] .sealmark text { font-size: 10px; letter-spacing: 0; }
   .pos__item b { font-size: 13px; }
   .prow__minus { width: 30px; height: 30px; }
   .ticket__state { padding: 7px 10px; min-height: 32px; }
+  .pmethod { padding: 9px 10px; }
   .posreceipt__total { font-size: 17px; }
   /* наклоны бумаги на узком экране мешают — выпрямляем */
   .ticket, .shelf, .batch, .posreceipt { transform: none; }
@@ -1564,7 +1587,7 @@ html[lang="uz"] .sealmark text { font-size: 10px; letter-spacing: 0; }
   .posreceipt.is-paid { animation: none; }
   .pstamp, .stamp.is-stamped, #posNo.is-new, .shelf__stock.is-new, .ticket.is-new .ticket__row { animation: none; }
   .stamp:active { transform: none; }
-  .ticket__state { transition: none; }
+  .ticket__state, .pmethod { transition: none; }
   .dentry__hand::after { transition: none; }
 }
 
