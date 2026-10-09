@@ -50,7 +50,9 @@ const I18N = {
     "chap.cafe": "Глава 03 · Кафе и рестораны",
     "chap.market": "Глава 04 · Магазины",
     "chap.pharm": "Глава 05 · Аптеки",
-    "chap.more": "Подробнее →",
+    "chap.cafe.cta": "Обсудить для моего кафе →",
+    "chap.market.cta": "Обсудить для моего магазина →",
+    "chap.pharm.cta": "Обсудить для моей аптеки →",
 
     "products.cafe.desc": "Система автоматизации для кафе, ресторанов, баров, столовых и фуд-кортов.",
     "products.cafe.f1": "Терминал официанта и кассира",
@@ -308,7 +310,9 @@ const I18N = {
     "chap.cafe": "03-bob · Kafe va restoranlar",
     "chap.market": "04-bob · Do'konlar",
     "chap.pharm": "05-bob · Dorixonalar",
-    "chap.more": "Batafsil →",
+    "chap.cafe.cta": "Kafem uchun muhokama qilish →",
+    "chap.market.cta": "Do'konim uchun muhokama qilish →",
+    "chap.pharm.cta": "Dorixonam uchun muhokama qilish →",
 
     "products.cafe.desc": "Kafe, restoran, bar, oshxona va fud-kortlar uchun avtomatlashtirish tizimi.",
     "products.cafe.f1": "Ofitsiant va kassir terminali",
@@ -566,7 +570,9 @@ const I18N = {
     "chap.cafe": "Chapter 03 · Cafes and restaurants",
     "chap.market": "Chapter 04 · Shops",
     "chap.pharm": "Chapter 05 · Pharmacies",
-    "chap.more": "Learn more →",
+    "chap.cafe.cta": "Discuss it for my cafe →",
+    "chap.market.cta": "Discuss it for my shop →",
+    "chap.pharm.cta": "Discuss it for my pharmacy →",
 
     "products.cafe.desc": "An automation system for cafes, restaurants, bars, canteens and food courts.",
     "products.cafe.f1": "Waiter and cashier terminal",
