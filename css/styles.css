@@ -1,5 +1,5 @@
 /* ============================================================
-   Improsoft v2 — «BIR CHIZIQ» (Одна линия)
+   Improsoft v3.4 — «BIR CHIZIQ» (Одна линия)
    Гирих как инженерия: одна линия по правилу порождает узор —
    одна платформа порождает все продукты.
    Палитра: штукатурка-белый + зелёные чернила.
@@ -167,6 +167,7 @@ svg { display: block; }
 /* Штампы-языки */
 .stamps { display: flex; gap: 6px; }
 .stamp {
+  position: relative;
   font-family: var(--font-mono);
   font-size: 12.5px;
   line-height: 1;
@@ -189,6 +190,14 @@ svg { display: block; }
   color: var(--green-deep);
 }
 .stamp--tg:hover { background: var(--green-deep); color: var(--plaster); }
+/* невидимая зона нажатия ~48px и «шлепок» печати при выборе языка */
+.stamp::after { content: ""; position: absolute; top: -9px; right: -5px; bottom: -9px; left: -5px; }
+.stamp:active { transform: scale(.94); }
+.stamp.is-stamped { animation: stampin .3s cubic-bezier(.2, 1.5, .4, 1); }
+@keyframes stampin {
+  from { transform: scale(1.25) rotate(-5deg); }
+  to   { transform: none; }
+}
 
 /* ============ Типографика ============ */
 .kicker {
@@ -249,6 +258,12 @@ svg { display: block; }
 }
 .btn:hover { background: var(--deep); border-color: var(--deep); }
 .btn:active { transform: translateY(1px); }
+/* тач-гигиена: без задержки двойного тапа, серой вспышки и выделения текста при долгом нажатии */
+.btn, .dentry, .pos__item, .stamp, .posbar, .faq__item summary, .prow__minus, .posreceipt__clear, .ticket__state, .shelf {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.dentry, .pos__item, .posbar, .ticket__state { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 .btn--ghost {
   background: transparent;
   color: var(--green-deep);
@@ -395,7 +410,9 @@ svg { display: block; }
   background: var(--green);
   transition: width .35s ease;
 }
-.dentry:hover .dentry__hand { color: var(--green-deep); }
+@media (hover: hover) { .dentry:hover .dentry__hand { color: var(--green-deep); } }
+.dentry:active .dentry__hand { color: var(--green-deep); }
+.dentry.is-done { cursor: default; }
 .dentry.is-done .dentry__hand { opacity: .38; }
 .dentry.is-done .dentry__hand::after { width: 100%; }
 .daftar__papernote {
@@ -464,6 +481,20 @@ svg { display: block; }
 }
 .lrow--inline.lrow--total { border-top: 1px solid var(--reed); }
 .daftar__all { margin-top: 26px; }
+/* штамп «ПРОВЕДЕНО» — финал главы в языке печатей (пружинка sealin — та же, что у печати ПРИНЯТО) */
+.pstamp {
+  display: table;
+  margin: 10px 4px 6px auto;
+  font-size: 12.5px;
+  letter-spacing: .14em;
+  color: var(--green-deep);
+  border: 2px solid var(--green-deep);
+  outline: 1px dashed var(--green-deep);
+  outline-offset: 3px;
+  padding: 5px 10px;
+  transform: rotate(-8deg);
+  animation: sealin .35s cubic-bezier(.2, 1.6, .4, 1);
+}
 
 /* ============ Главы продуктов ============ */
 .chapter__grid {
@@ -579,10 +610,34 @@ svg { display: block; }
   border: 1px solid var(--reed);
   min-width: 96px;
   text-align: center;
+  /* теперь это кнопка: сбрасываем вид UA, повар «отдаёт» блюдо тапом */
+  background: var(--paper);
+  cursor: pointer;
+  border-radius: 0;
+  -webkit-appearance: none;
+  appearance: none;
+  line-height: 1.4;
+  transition: border-color .15s ease, background .15s ease, color .15s ease;
 }
+@media (hover: hover) { .ticket__state[data-state="cook"]:hover { border-color: var(--green-deep); } }
+.ticket__state[data-state="done"] { cursor: default; }
+.ticket__state:active { transform: translateY(1px); }
 .ticket__state[data-state="cook"] { color: var(--green-deep); }
 .ticket__state[data-state="done"] { color: var(--plaster); background: var(--green-deep); border-color: var(--green-deep); }
 .ticket__foot { font-size: 11.5px; color: color-mix(in srgb, var(--ink) 45%, var(--paper)); border-top: 1px dashed var(--reed); margin-top: 14px; padding-top: 10px; }
+.ticket__hint, .shelf__hint { font-size: 11px; color: color-mix(in srgb, var(--ink) 42%, var(--paper)); text-align: center; padding-top: 8px; }
+.ticket.is-touched .ticket__hint { visibility: hidden; }
+/* новый тикет: строки допечатываются сверху вниз */
+.ticket.is-new .ticket__row { animation: printrow .4s ease both; }
+.ticket.is-new .ticket__row:nth-of-type(2) { animation-delay: .12s; }
+.ticket.is-new .ticket__row:nth-of-type(3) { animation-delay: .24s; }
+/* чек магазина: нажимаемый — «скан» товара и строка остатка */
+.shelf { cursor: pointer; }
+.shelf:focus-visible { outline-offset: 6px; }
+.shelf__row.is-scanned span:first-child { color: var(--green-deep); font-weight: 600; }
+.shelf__stock { font-size: 12.5px; color: var(--green-deep); padding-top: 6px; }
+.shelf__stock.is-new { animation: printrow .45s ease; }
+.shelf.is-used .shelf__hint { display: none; }
 
 .batch__cell {
   display: flex;
@@ -597,7 +652,7 @@ svg { display: block; }
 .batch__cell .mono:first-child, .batch__ok { white-space: nowrap; }
 .batch__cell--warn { border-color: var(--green-deep); }
 .batch__ok { color: var(--green-deep); font-size: 12px; }
-.batch__cell--warn .batch__ok { color: var(--green-deep); }
+.batch__cell--warn .batch__ok { color: var(--green-deep); border: 1.5px solid var(--green-deep); padding: 2px 7px; letter-spacing: .08em; transform: rotate(-5deg); }
 .batch__date { color: color-mix(in srgb, var(--ink) 65%, var(--paper)); }
 
 /* ============ 6. Купол ============ */
@@ -861,6 +916,7 @@ svg { display: block; }
   border-bottom-color: var(--green-deep);
 }
 .rfield input.is-invalid { border-bottom-color: #c0392b; }
+.rfield__err { display: block; font-size: 11.5px; color: #a3392e; margin-top: 6px; }
 .receipt__note {
   font-size: 12px;
   color: color-mix(in srgb, var(--ink) 55%, var(--paper));
@@ -955,7 +1011,7 @@ html[lang="uz"] .sealmark text { font-size: 10px; letter-spacing: 0; }
 .stickybar__btn--tg { background: var(--green-deep); color: var(--plaster); }
 .stickybar.is-hidden { display: none !important; }
 
-/* ============ Демо-касса ============ */
+/* ============ Мини-касса ============ */
 .try__grid {
   display: grid;
   grid-template-columns: 1.1fr 0.9fr;
@@ -997,7 +1053,7 @@ html[lang="uz"] .sealmark text { font-size: 10px; letter-spacing: 0; }
   cursor: pointer;
   transition: border-color .15s ease, background .15s ease, transform .08s ease;
 }
-.pos__item:hover { border-color: var(--green); }
+@media (hover: hover) { .pos__item:hover { border-color: var(--green); } }
 .pos__item:active { transform: translateY(1px); background: #fff; }
 .pos__item b { font-weight: 400; font-size: 12.5px; color: var(--green-deep); }
 .pos__hint {
@@ -1015,13 +1071,15 @@ html[lang="uz"] .sealmark text { font-size: 10px; letter-spacing: 0; }
   box-shadow: 0 18px 44px rgba(54, 52, 53, .12);
   transform: rotate(.8deg);
 }
-.posreceipt::before {
+.posreceipt::before, .posreceipt::after {
   content: "";
   position: absolute;
-  left: 0; right: 0; top: -1px;
+  left: 0; right: 0;
   height: 7px;
   background: repeating-linear-gradient(90deg, var(--reed) 0 9px, transparent 9px 18px);
 }
+.posreceipt::before { top: -1px; }
+.posreceipt::after { bottom: -1px; } /* нижняя перфорация — «отрыву» есть от чего отрываться */
 .posreceipt__head {
   display: flex;
   justify-content: space-between;
@@ -1052,6 +1110,39 @@ html[lang="uz"] .sealmark text { font-size: 10px; letter-spacing: 0; }
   transform: translateY(-4px);
   min-width: 16px;
 }
+/* сторно: «−» в строке чека (26px + невидимая зона до ~44px) */
+.prow__minus {
+  flex: none;
+  align-self: center;
+  position: relative;
+  width: 26px; height: 26px;
+  margin-left: 2px;
+  border: 1px solid var(--reed);
+  background: transparent;
+  color: var(--green-deep);
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 0;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.prow__minus::after { content: ""; position: absolute; top: -9px; right: -6px; bottom: -9px; left: -6px; }
+@media (hover: hover) { .prow__minus:hover { border-color: var(--green-deep); } }
+.posreceipt__clear {
+  display: block;
+  margin: -8px auto 12px;
+  padding: 8px 10px;
+  background: none;
+  border: none;
+  font-size: 11.5px;
+  color: var(--green-deep);
+  opacity: .75;
+  cursor: pointer;
+}
+.posreceipt__clear:hover { opacity: 1; }
+#posNo.is-new { animation: printrow .4s ease; }
+.posreceipt__cnt { white-space: nowrap; }
 .posreceipt__total {
   display: flex;
   align-items: baseline;
@@ -1077,7 +1168,7 @@ html[lang="uz"] .sealmark text { font-size: 10px; letter-spacing: 0; }
   max-width: 62ch;
 }
 
-/* --- демо в тёмной секции: настоящий терминал --- */
+/* --- мини-касса в тёмной секции: настоящий терминал --- */
 .try--dark { background: var(--deep); }
 .try--dark .underdrawn::before { border-color: color-mix(in srgb, var(--plaster) 25%, transparent); }
 .try--dark .try__note { color: color-mix(in srgb, var(--plaster) 65%, transparent); }
@@ -1097,10 +1188,12 @@ html[lang="uz"] .sealmark text { font-size: 10px; letter-spacing: 0; }
   border-color: #3c473f;
   color: var(--plaster);
 }
-.pos--screen .pos__item:hover {
-  border-color: var(--green);
-  background: #2e342e;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, .3);
+@media (hover: hover) {
+  .pos--screen .pos__item:hover {
+    border-color: var(--green);
+    background: #2e342e;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .3);
+  }
 }
 .pos--screen .pos__item:active { background: #232823; }
 .pos--screen .pos__item b { color: var(--green); }
@@ -1130,8 +1223,9 @@ html[lang="uz"] .sealmark text { font-size: 10px; letter-spacing: 0; }
   to { transform: scale(1); }
 }
 
-/* плавающий итог демо-кассы (мобильные/планшеты): результат тапа всегда виден */
+/* плавающий итог мини-кассы (мобильные/планшеты): результат тапа всегда виден */
 .posbar {
+  min-height: 44px;
   position: fixed;
   left: 12px; right: 12px;
   bottom: 12px;
@@ -1427,18 +1521,24 @@ html[lang="uz"] .sealmark text { font-size: 10px; letter-spacing: 0; }
   /* --- мобильная полировка --- */
   .hero__title { text-wrap: wrap; } /* без balance: не оставляет одинокое первое слово */
   .dentry__hand { font-size: 19px; line-height: 1.4; }
+  /* записи переносятся на две строки — рисованная линия (::after) попадает между строк; на телефоне зачёркиваем обычным подчёркиванием */
+  .dentry__hand::after { display: none; }
+  .dentry.is-done .dentry__hand { text-decoration: line-through; text-decoration-color: var(--green); text-decoration-thickness: 2px; }
   .daftar__all { width: 100%; }
   .pos--screen { padding: 18px 14px 12px; }
   .pos__items { gap: 8px; }
   .pos__item { min-height: 60px; padding: 12px; }
   .pos__item b { font-size: 13px; }
+  .prow__minus { width: 30px; height: 30px; }
+  .ticket__state { padding: 7px 10px; min-height: 32px; }
   .posreceipt__total { font-size: 17px; }
   /* наклоны бумаги на узком экране мешают — выпрямляем */
   .ticket, .shelf, .batch, .posreceipt { transform: none; }
   .bigword { padding: 64px 0 56px; }
   .daycard__art { max-width: 210px; }
 
-  .stamp { padding: 6px 8px; font-size: 11.5px; }
+  .stamp { padding: 8px 10px; font-size: 11.5px; }
+  .stamps { gap: 10px; }
   .stamp--tg { display: none; } /* на мобильных Telegram живёт в липкой панели */
 
   .underdrawn::before { left: -18px; width: 44px; height: 44px; }
@@ -1462,6 +1562,10 @@ html[lang="uz"] .sealmark text { font-size: 10px; letter-spacing: 0; }
   .faq__chevron { transition: none; }
   .pos__count, .posbar { animation: none; }
   .posreceipt.is-paid { animation: none; }
+  .pstamp, .stamp.is-stamped, #posNo.is-new, .shelf__stock.is-new, .ticket.is-new .ticket__row { animation: none; }
+  .stamp:active { transform: none; }
+  .ticket__state { transition: none; }
+  .dentry__hand::after { transition: none; }
 }
 
 /* без JS вся графика дорисована и видима
@@ -1473,3 +1577,4 @@ html[lang="uz"] .sealmark text { font-size: 10px; letter-spacing: 0; }
 :root:not(.js) .underdraw line { opacity: .8; }
 :root:not(.js) .hero__ticks line,
 :root:not(.js) .city { opacity: 1; }
+:root:not(.js) .ticket__hint, :root:not(.js) .shelf__hint { display: none; }

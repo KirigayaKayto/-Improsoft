@@ -9,3 +9,6 @@ Thumbs.db
 # деплой-архивы
 *.zip
 tg-config.php
+
+# логи браузерных проверок (Playwright MCP)
+.playwright-mcp/

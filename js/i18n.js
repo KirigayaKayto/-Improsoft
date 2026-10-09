@@ -1,6 +1,7 @@
 /* ============================================================
    Improsoft v2 — словари переводов (RU / UZ latin / EN)
    RU — язык по умолчанию (тексты в index.html).
+   Ключи с {d} — шаблоны: значение подставляет main.js (пока только pharm.expiry).
    ============================================================ */
 
 const I18N = {
@@ -21,7 +22,7 @@ const I18N = {
     "hero2.kicker": "Автоматизация бизнеса · Узбекистан",
     "hero2.title": "Один узор — весь ваш бизнес",
     "hero2.sub": "Кассы и учёт для кафе, магазинов и аптек. Настроим за четыре дня, обучим персонал и останемся на связи — по-узбекски и по-русски.",
-    "hero2.cta1": "Посмотреть демо — бесплатно",
+    "hero2.cta1": "Рассчитать стоимость — бесплатно",
     "hero2.cta2": "Попробовать кассу прямо здесь ↓",
     "hero.stat1": "продукта платформы",
     "hero.stat2": "городов Узбекистана",
@@ -43,6 +44,8 @@ const I18N = {
     "daftar.l4": "Севара опа · до четверга",
     "daftar.total": "ИТОГО · ничего не забыто",
     "daftar.all": "Провести все записи",
+    "daftar.again": "Начать заново",
+    "daftar.stamp": "ПРОВЕДЕНО",
 
     "chap.cafe": "Глава 03 · Кафе и рестораны",
     "chap.market": "Глава 04 · Магазины",
@@ -60,6 +63,7 @@ const I18N = {
     "cafe.dish3": "Чай · 1",
     "cafe.cooking": "готовится",
     "cafe.served": "подано",
+    "cafe.tapHint": "— нажмите «готовится», чтобы отдать блюдо —",
 
     "products.market.desc": "Система автоматизации для магазинов, минимаркетов и бутиков.",
     "products.market.f1": "Быстрая касса со штрихкодами",
@@ -72,6 +76,9 @@ const I18N = {
     "market.i3": "Рис, 1 кг",
     "market.total": "ИТОГО",
     "market.stockNote": "остатки обновлены автоматически",
+    "market.stock": "остаток",
+    "market.tapHint": "— нажмите на чек: касса отсканирует товар —",
+    "market.scanLabel": "Отсканировать товар",
 
     "products.pharm.desc": "Система автоматизации для аптек и фармацевтического бизнеса.",
     "products.pharm.f1": "Учёт медикаментов по сериям",
@@ -79,8 +86,7 @@ const I18N = {
     "products.pharm.f3": "Интеграция со справочниками",
     "products.pharm.f4": "Отчётность для контролирующих органов",
     "pharm.batchHead": "ПАРТИЯ · КОНТРОЛЬ СРОКОВ",
-    "pharm.expiry": "годен до 03.2027",
-    "pharm.expiry2": "годен до 09.2026",
+    "pharm.expiry": "годен до {d}",
     "pharm.warn": "СКОРО",
     "pharm.note": "система предупредит заранее",
 
@@ -140,9 +146,9 @@ const I18N = {
     "days.w4": "Остаёмся на связи — по-узбекски и по-русски",
 
     "zayavka.kicker": "Глава 12 · Заявка",
-    "zayavka.title": "Покажем систему на вашем примере",
+    "zayavka.title": "Расскажите о своей точке — посчитаем стоимость",
     "zayavka.side": "Или напишите нам напрямую — отвечаем быстро:",
-    "zayavka.note": "Приедем, покажем систему в работе и посчитаем стоимость под ваши задачи — бесплатно.",
+    "zayavka.note": "Приедем, посмотрим вашу точку и посчитаем стоимость под ваши задачи — бесплатно.",
     "form.title": "Оставить заявку",
     "form.name": "Ваше имя",
     "form.namePlaceholder": "Например, Алишер",
@@ -158,6 +164,7 @@ const I18N = {
     "form.note": "Нажимая кнопку, вы соглашаетесь на обработку персональных данных.",
     "form.success": "Спасибо! Мы свяжемся с вами в ближайшее время.",
     "form.error": "Не получилось отправить. Напишите нам в Telegram — ответим быстро:",
+    "form.required": "Заполните это поле",
     "stamp.accepted": "ПРИНЯТО",
 
     "sticky.call": "Позвонить",
@@ -180,7 +187,10 @@ const I18N = {
     "try.paid": "Оплачено ✓ Выручка смены:",
     "try.sum": "сум",
     "try.toReceipt": "К чеку ↓",
-    "try.note": "Это упрощённое демо. Вживую покажем полную кассу — с кухней, складом и отчётами.",
+    "try.clear": "— очистить чек —",
+    "try.remove": "Убрать одну",
+    "try.receipts": "чеков",
+    "try.note": "Это упрощённая модель кассы. В настоящей Impro Cafe есть ещё кухня, склад и отчёты.",
     "proof.label": "заведений уже работают на Impro",
 
     "day.kicker": "Глава 07 · Один день с Impro",
@@ -216,8 +226,8 @@ const I18N = {
     "faq.a4": "Обычно четыре дня: установка, настройка и обучение персонала — и вы принимаете заказы.",
     "faq.q5": "На каком языке поддержка?",
     "faq.a5": "На узбекском и русском. Отвечают живые специалисты, не бот.",
-    "faq.q6": "Можно посмотреть систему до покупки?",
-    "faq.a6": "Конечно. Покажем у вас или в нашем офисе — бесплатно и без обязательств. Просто оставьте заявку ниже.",
+    "faq.q6": "С чего начать?",
+    "faq.a6": "Оставьте заявку или напишите в Telegram. Уточним задачи, посчитаем стоимость и назначим день установки.",
     "form.soft": "— заявка ни к чему не обязывает —",
     "bigword.word": "УЧЁТ.",
     "bigword.caption": "одно слово — вся суть Impro",
@@ -245,7 +255,7 @@ const I18N = {
     "hero2.kicker": "Biznesni avtomatlashtirish · O'zbekiston",
     "hero2.title": "Bitta naqsh — butun biznesingiz",
     "hero2.sub": "Kafe, do'kon va dorixonalar uchun kassa va hisob. To'rt kunda sozlab, xodimlarni o'qitamiz va doim aloqada qolamiz — o'zbek va rus tillarida.",
-    "hero2.cta1": "Demo ko'rish — bepul",
+    "hero2.cta1": "Narxni hisoblash — bepul",
     "hero2.cta2": "Kassani shu yerda sinab ko'ring ↓",
     "hero.stat1": "ta platforma mahsuloti",
     "hero.stat2": "shahar O'zbekiston bo'ylab",
@@ -267,6 +277,8 @@ const I18N = {
     "daftar.l4": "Sevara opa · payshanbagacha",
     "daftar.total": "JAMI · hech narsa unutilmadi",
     "daftar.all": "Barcha yozuvlarni o'tkazish",
+    "daftar.again": "Qaytadan boshlash",
+    "daftar.stamp": "O'TKAZILDI",
 
     "chap.cafe": "03-bob · Kafe va restoranlar",
     "chap.market": "04-bob · Do'konlar",
@@ -284,6 +296,7 @@ const I18N = {
     "cafe.dish3": "Choy · 1",
     "cafe.cooking": "tayyorlanmoqda",
     "cafe.served": "berildi",
+    "cafe.tapHint": "— taomni berish uchun «tayyorlanmoqda» tugmasini bosing —",
 
     "products.market.desc": "Do'konlar, minimarketlar va butiklar uchun avtomatlashtirish tizimi.",
     "products.market.f1": "Shtrix-kodli tezkor kassa",
@@ -296,6 +309,9 @@ const I18N = {
     "market.i3": "Guruch, 1 kg",
     "market.total": "JAMI",
     "market.stockNote": "qoldiqlar avtomatik yangilandi",
+    "market.stock": "qoldiq",
+    "market.tapHint": "— chekni bosing: kassa tovarni skanerlaydi —",
+    "market.scanLabel": "Tovarni skanerlash",
 
     "products.pharm.desc": "Dorixonalar va farmatsevtika biznesi uchun avtomatlashtirish tizimi.",
     "products.pharm.f1": "Dori vositalarini seriyalar bo'yicha hisobga olish",
@@ -303,8 +319,7 @@ const I18N = {
     "products.pharm.f3": "Ma'lumotnomalar bilan integratsiya",
     "products.pharm.f4": "Nazorat organlari uchun hisobotlar",
     "pharm.batchHead": "PARTIYA · MUDDAT NAZORATI",
-    "pharm.expiry": "muddati 03.2027-gacha",
-    "pharm.expiry2": "muddati 09.2026-gacha",
+    "pharm.expiry": "muddati {d}-gacha",
     "pharm.warn": "YAQIN",
     "pharm.note": "tizim oldindan ogohlantiradi",
 
@@ -364,9 +379,9 @@ const I18N = {
     "days.w4": "Doim aloqada qolamiz — o'zbek va rus tillarida",
 
     "zayavka.kicker": "12-bob · So'rov",
-    "zayavka.title": "Tizimni o'z biznesingiz misolida ko'rsatamiz",
+    "zayavka.title": "Nuqtangiz haqida aytib bering — narxini hisoblab beramiz",
     "zayavka.side": "Yoki bizga to'g'ridan-to'g'ri yozing — tez javob beramiz:",
-    "zayavka.note": "O'zimiz oldingizga boramiz, tizimni amalda ko'rsatamiz va vazifalaringizga mos narxni hisoblab beramiz — bepul.",
+    "zayavka.note": "O'zimiz oldingizga boramiz, nuqtangizni ko'rib chiqamiz va vazifalaringizga mos narxni hisoblab beramiz — bepul.",
     "form.title": "So'rov qoldirish",
     "form.name": "Ismingiz",
     "form.namePlaceholder": "Masalan, Alisher",
@@ -382,6 +397,7 @@ const I18N = {
     "form.note": "Tugmani bosish orqali shaxsiy ma'lumotlarni qayta ishlashga rozilik bildirasiz.",
     "form.success": "Rahmat! Tez orada siz bilan bog'lanamiz.",
     "form.error": "Yuborib bo'lmadi. Bizga Telegramda yozing — tez javob beramiz:",
+    "form.required": "Bu maydonni to'ldiring",
     "stamp.accepted": "QABUL QILINDI",
 
     "sticky.call": "Qo'ng'iroq",
@@ -404,7 +420,10 @@ const I18N = {
     "try.paid": "To'landi ✓ Smena tushumi:",
     "try.sum": "so'm",
     "try.toReceipt": "Chekka o'tish ↓",
-    "try.note": "Bu soddalashtirilgan demo. Jonli ko'rsatuvda to'liq kassani ko'rasiz — oshxona, ombor va hisobotlar bilan.",
+    "try.clear": "— chekni tozalash —",
+    "try.remove": "Bittasini olib tashlash",
+    "try.receipts": "cheklar",
+    "try.note": "Bu kassaning soddalashtirilgan modeli. Haqiqiy Impro Cafeda yana oshxona, ombor va hisobotlar bor.",
     "proof.label": "muassasa allaqachon Improda ishlaydi",
 
     "day.kicker": "07-bob · Impro bilan bir kun",
@@ -440,8 +459,8 @@ const I18N = {
     "faq.a4": "Odatda to'rt kun: o'rnatish, sozlash va xodimlarni o'qitish — va siz buyurtma qabul qilasiz.",
     "faq.q5": "Qo'llab-quvvatlash qaysi tilda?",
     "faq.a5": "O'zbek va rus tillarida. Jonli mutaxassislar javob berishadi, bot emas.",
-    "faq.q6": "Tizimni sotib olishdan oldin ko'rsam bo'ladimi?",
-    "faq.a6": "Albatta. Sizda yoki ofisimizda ko'rsatamiz — bepul va majburiyatsiz. Shunchaki quyida so'rov qoldiring.",
+    "faq.q6": "Nimadan boshlash kerak?",
+    "faq.a6": "So'rov qoldiring yoki Telegramda yozing. Vazifalaringizni aniqlab, narxni hisoblaymiz va o'rnatish kunini belgilaymiz.",
     "form.soft": "— so'rov hech narsaga majbur qilmaydi —",
     "bigword.word": "HISOB.",
     "bigword.caption": "bitta so'z — Improning butun mohiyati",
@@ -469,7 +488,7 @@ const I18N = {
     "hero2.kicker": "Business automation · Uzbekistan",
     "hero2.title": "One pattern — your whole business",
     "hero2.sub": "Tills and back office for cafes, shops and pharmacies. Set up in four days, staff trained — and we stay in touch, in Uzbek and Russian.",
-    "hero2.cta1": "See a demo — it's free",
+    "hero2.cta1": "Get a free quote",
     "hero2.cta2": "Try the till right here ↓",
     "hero.stat1": "platform products",
     "hero.stat2": "cities across Uzbekistan",
@@ -491,6 +510,8 @@ const I18N = {
     "daftar.l4": "Sevara opa · by Thursday",
     "daftar.total": "TOTAL · nothing forgotten",
     "daftar.all": "Post all entries",
+    "daftar.again": "Start over",
+    "daftar.stamp": "POSTED",
 
     "chap.cafe": "Chapter 03 · Cafes and restaurants",
     "chap.market": "Chapter 04 · Shops",
@@ -508,6 +529,7 @@ const I18N = {
     "cafe.dish3": "Tea · 1",
     "cafe.cooking": "cooking",
     "cafe.served": "served",
+    "cafe.tapHint": "— tap “cooking” to send the dish out —",
 
     "products.market.desc": "An automation system for shops, minimarkets and boutiques.",
     "products.market.f1": "Fast barcode checkout",
@@ -520,6 +542,9 @@ const I18N = {
     "market.i3": "Rice, 1 kg",
     "market.total": "TOTAL",
     "market.stockNote": "stock updated automatically",
+    "market.stock": "stock",
+    "market.tapHint": "— tap the receipt: the till scans an item —",
+    "market.scanLabel": "Scan an item",
 
     "products.pharm.desc": "An automation system for pharmacies and the pharmaceutical business.",
     "products.pharm.f1": "Batch-level medicine tracking",
@@ -527,8 +552,7 @@ const I18N = {
     "products.pharm.f3": "Integration with drug directories",
     "products.pharm.f4": "Regulatory reporting",
     "pharm.batchHead": "BATCH · EXPIRY TRACKING",
-    "pharm.expiry": "expires 03/2027",
-    "pharm.expiry2": "expires 09/2026",
+    "pharm.expiry": "expires {d}",
     "pharm.warn": "SOON",
     "pharm.note": "the system warns you in advance",
 
@@ -588,9 +612,9 @@ const I18N = {
     "days.w4": "We stay in touch — in Uzbek and Russian",
 
     "zayavka.kicker": "Chapter 12 · Your request",
-    "zayavka.title": "We'll show you how the system works for your business",
+    "zayavka.title": "Tell us about your outlet — we'll quote a price",
     "zayavka.side": "Or contact us directly — we reply fast:",
-    "zayavka.note": "We'll come to you, show the system in action and give you a quote tailored to your needs — free of charge.",
+    "zayavka.note": "We'll come to you, look at your outlet and give you a quote tailored to your needs — free of charge.",
     "form.title": "Submit a request",
     "form.name": "Your name",
     "form.namePlaceholder": "e.g. Alisher",
@@ -606,6 +630,7 @@ const I18N = {
     "form.note": "By clicking the button, you consent to the processing of your personal data.",
     "form.success": "Thank you! We will contact you shortly.",
     "form.error": "Couldn't send your request. Message us on Telegram — we reply fast:",
+    "form.required": "Please fill in this field",
     "stamp.accepted": "RECEIVED",
 
     "sticky.call": "Call us",
@@ -628,7 +653,10 @@ const I18N = {
     "try.paid": "Paid ✓ Shift revenue:",
     "try.sum": "som",
     "try.toReceipt": "To the receipt ↓",
-    "try.note": "This is a simplified demo. In a live demo you'll see the full till — kitchen, inventory and reports.",
+    "try.clear": "— clear the receipt —",
+    "try.remove": "Remove one",
+    "try.receipts": "receipts",
+    "try.note": "This is a simplified model of the till. The real Impro Cafe also has a kitchen display, inventory and reports.",
     "proof.label": "businesses already run on Impro",
 
     "day.kicker": "Chapter 07 · One day with Impro",
@@ -664,8 +692,8 @@ const I18N = {
     "faq.a4": "Usually four days: installation, setup and staff training — and you're taking orders.",
     "faq.q5": "What language is support in?",
     "faq.a5": "In Uzbek and Russian. Real specialists answer — not a bot.",
-    "faq.q6": "Can I see the system before buying?",
-    "faq.a6": "Of course. We'll show it at your place or in our office — free, no strings attached. Just leave a request below.",
+    "faq.q6": "How do I get started?",
+    "faq.a6": "Leave a request or message us on Telegram. We'll clarify your needs, give you a quote and schedule the installation day.",
     "form.soft": "— your request comes with no obligations —",
     "bigword.word": "LEDGER.",
     "bigword.caption": "one word — everything Impro does",

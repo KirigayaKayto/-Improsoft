@@ -46,9 +46,9 @@
       </nav>
       <div class="topbar__actions">
         <div class="stamps" role="group" aria-label="Выбор языка" data-i18n-aria-label="a11y.langSwitcher">
-          <button class="stamp" data-lang="ru" type="button" aria-pressed="true">RU</button>
-          <button class="stamp" data-lang="uz" type="button" aria-pressed="false">UZ</button>
-          <button class="stamp" data-lang="en" type="button" aria-pressed="false">EN</button>
+          <button class="stamp" data-lang="ru" lang="ru" aria-label="RU · Русский" type="button" aria-pressed="true">RU</button>
+          <button class="stamp" data-lang="uz" lang="uz" aria-label="UZ · Oʻzbekcha" type="button" aria-pressed="false">UZ</button>
+          <button class="stamp" data-lang="en" lang="en" aria-label="EN · English" type="button" aria-pressed="false">EN</button>
         </div>
         <a class="stamp stamp--tg" href="https://t.me/improsoftsupport" target="_blank" rel="noopener">Telegram</a>
       </div>
@@ -93,7 +93,7 @@
         </div>
 
         <div class="hero__cta">
-          <a href="#zayavka" class="btn" data-i18n="hero2.cta1">Посмотреть демо — бесплатно</a>
+          <a href="#zayavka" class="btn" data-i18n="hero2.cta1">Рассчитать стоимость — бесплатно</a>
           <a href="#try" class="linklead" data-i18n="hero2.cta2">Попробовать кассу прямо здесь ↓</a>
         </div>
       </div>
@@ -121,6 +121,7 @@
               <span class="dentry__hand" data-i18n="daftar.e4">Севара опа — 26 500 — обещала в четверг</span>
             </button>
             <p class="daftar__papernote mono" data-i18n="daftar.paperNote">— страница из дафтара —</p>
+            <span class="pstamp mono" id="daftarStamp" data-i18n="daftar.stamp" hidden>ПРОВЕДЕНО</span>
           </div>
 
           <div class="daftar__threshold" aria-hidden="true"></div>
@@ -164,7 +165,7 @@
     </section>
 
     <!-- ===== 3. IMPRO CAFE — узел-розетка ===== -->
-    <!-- ===== 2a. ПОПРОБУЙТЕ САМИ: демо кассы ===== -->
+    <!-- ===== 2a. ПОПРОБУЙТЕ САМИ: мини-касса ===== -->
     <section class="section try try--dark ondark" id="try">
       <div class="frame">
         <p class="kicker mono" data-i18n="try.kicker">Глава 02 · Попробуйте сами</p>
@@ -183,20 +184,23 @@
             </div>
             <p class="pos__hint mono" data-i18n="try.hint">— нажмите на блюдо, чтобы добавить в чек —</p>
           </div>
-          <div class="posreceipt" aria-live="polite">
-            <p class="posreceipt__head mono"><span data-i18n="try.receiptHead">ЧЕК</span> <span>№ 0215</span></p>
+          <div class="posreceipt">
+            <p class="posreceipt__head mono"><span data-i18n="try.receiptHead">ЧЕК</span> <span>№ <span id="posNo">0215</span></span></p>
             <p class="posreceipt__empty mono" id="posEmpty" data-i18n="try.empty">— чек пуст —</p>
             <div class="posreceipt__rows" id="posRows"></div>
-            <div class="posreceipt__total">
+            <div class="posreceipt__total" aria-live="polite" aria-atomic="true">
               <span class="mono" data-i18n="try.total">ИТОГО</span>
               <span class="posreceipt__dots"></span>
               <span class="mono" id="posTotal">0</span>
             </div>
+            <button class="posreceipt__clear mono" id="posClear" type="button" hidden data-i18n="try.clear">— очистить чек —</button>
             <button class="btn btn--full" id="posPay" type="button" disabled data-i18n="try.pay">Оплатить</button>
-            <p class="posreceipt__done mono" id="posDone" hidden><span data-i18n="try.paid">Оплачено ✓ Выручка смены:</span> <b id="posRevenue">0</b> <span data-i18n="try.sum">сум</span></p>
+            <div role="status" class="posreceipt__status">
+              <p class="posreceipt__done mono" id="posDone" hidden><span data-i18n="try.paid">Оплачено ✓ Выручка смены:</span> <b id="posRevenue">0</b> <span data-i18n="try.sum">сум</span> <span class="posreceipt__cnt">· <span data-i18n="try.receipts">чеков</span>: <span id="posCount">0</span></span></p>
+            </div>
           </div>
         </div>
-        <p class="try__note" data-i18n="try.note">Это упрощённое демо. Вживую покажем полную кассу — с кухней, складом и отчётами.</p>
+        <p class="try__note" data-i18n="try.note">Это упрощённая модель кассы. В настоящей Impro Cafe есть ещё кухня, склад и отчёты.</p>
       </div>
     </section>
 
@@ -246,17 +250,18 @@
             <p class="ticket__head mono" data-i18n="cafe.ticketHead">КУХНЯ · СТОЛ 7</p>
             <div class="ticket__row">
               <span data-i18n="cafe.dish1">Лагман · 2</span>
-              <span class="ticket__state mono" data-state="cook">готовится</span>
+              <button type="button" class="ticket__state mono" data-state="cook">готовится</button>
             </div>
             <div class="ticket__row">
               <span data-i18n="cafe.dish2">Шашлык · 4</span>
-              <span class="ticket__state mono" data-state="cook">готовится</span>
+              <button type="button" class="ticket__state mono" data-state="cook">готовится</button>
             </div>
             <div class="ticket__row">
               <span data-i18n="cafe.dish3">Чай · 1</span>
-              <span class="ticket__state mono" data-state="done">подано</span>
+              <button type="button" class="ticket__state mono" data-state="done">подано</button>
             </div>
-            <p class="ticket__foot mono">12:47 · #0214</p>
+            <p class="ticket__hint mono" data-i18n="cafe.tapHint">— нажмите «готовится», чтобы отдать блюдо —</p>
+            <p class="ticket__foot mono"><span id="ticketClock">12:47</span> · #<span id="ticketNo">0214</span></p>
           </div>
         </div>
       </div>
@@ -308,13 +313,15 @@
           <a href="#zayavka" class="linklead" data-product="market" data-i18n="chap.more">Подробнее →</a>
         </div>
         <div class="chapter__vignette">
-          <div class="shelf">
+          <div class="shelf" role="button" tabindex="0" aria-label="Отсканировать товар" data-i18n-aria-label="market.scanLabel">
             <p class="shelf__head mono" data-i18n="market.shelfHead">КАССА · СМЕНА 2</p>
-            <div class="shelf__row"><span data-i18n="market.i1">Молоко 1 л</span><span class="shelf__dots"></span><span class="mono">9 800</span></div>
-            <div class="shelf__row"><span data-i18n="market.i2">Лепёшка</span><span class="shelf__dots"></span><span class="mono">4 000</span></div>
-            <div class="shelf__row"><span data-i18n="market.i3">Рис, 1 кг</span><span class="shelf__dots"></span><span class="mono">18 500</span></div>
+            <div class="shelf__row" data-stock="24"><span data-i18n="market.i1">Молоко 1 л</span><span class="shelf__dots"></span><span class="mono">9 800</span></div>
+            <div class="shelf__row" data-stock="60"><span data-i18n="market.i2">Лепёшка</span><span class="shelf__dots"></span><span class="mono">4 000</span></div>
+            <div class="shelf__row" data-stock="12"><span data-i18n="market.i3">Рис, 1 кг</span><span class="shelf__dots"></span><span class="mono">18 500</span></div>
             <div class="shelf__row shelf__row--total"><span class="mono" data-i18n="market.total">ИТОГО</span><span class="shelf__dots"></span><span class="mono">32 300</span></div>
             <p class="ticket__foot mono" data-i18n="market.stockNote">остатки обновлены автоматически</p>
+            <p class="shelf__stock mono" id="shelfStock" hidden></p>
+            <p class="shelf__hint mono" data-i18n="market.tapHint">— нажмите на чек: касса отсканирует товар —</p>
           </div>
         </div>
       </div>
@@ -350,12 +357,12 @@
             <p class="batch__head mono" data-i18n="pharm.batchHead">ПАРТИЯ · КОНТРОЛЬ СРОКОВ</p>
             <div class="batch__cell">
               <span class="mono">A-2231</span>
-              <span class="mono batch__date" data-i18n="pharm.expiry">годен до 03.2027</span>
+              <span class="mono batch__date" data-months="17">годен до 03.2028</span>
               <span class="batch__ok mono">OK</span>
             </div>
             <div class="batch__cell batch__cell--warn">
               <span class="mono">B-1187</span>
-              <span class="mono batch__date" data-i18n="pharm.expiry2">годен до 09.2026</span>
+              <span class="mono batch__date" data-months="2">годен до 12.2026</span>
               <span class="batch__ok mono" data-i18n="pharm.warn">СКОРО</span>
             </div>
             <p class="ticket__foot mono" data-i18n="pharm.note">система предупредит заранее</p>
@@ -640,8 +647,8 @@
             <p data-i18n="faq.a5">На узбекском и русском. Отвечают живые специалисты, не бот.</p>
           </details>
           <details class="faq__item">
-            <summary><span data-i18n="faq.q6">Можно посмотреть систему до покупки?</span><i class="faq__chevron" aria-hidden="true"></i></summary>
-            <p data-i18n="faq.a6">Конечно. Покажем у вас или в нашем офисе — бесплатно и без обязательств. Просто оставьте заявку ниже.</p>
+            <summary><span data-i18n="faq.q6">С чего начать?</span><i class="faq__chevron" aria-hidden="true"></i></summary>
+            <p data-i18n="faq.a6">Оставьте заявку или напишите в Telegram. Уточним задачи, посчитаем стоимость и назначим день установки.</p>
           </details>
         </div>
       </div>
@@ -650,17 +657,19 @@
     <section class="section section--tint zayavka" id="zayavka">
       <div class="frame">
         <p class="kicker mono" data-i18n="zayavka.kicker">Глава 12 · Заявка</p>
-        <h2 class="h2 underdrawn" data-i18n="zayavka.title">Покажем систему на вашем примере</h2>
+        <h2 class="h2 underdrawn" data-i18n="zayavka.title">Расскажите о своей точке — посчитаем стоимость</h2>
         <div class="zayavka__grid">
           <form class="receipt" id="leadForm" method="post" action="send.php">
             <p class="receipt__head mono" data-i18n="form.title">Оставить заявку</p>
             <div class="rfield">
               <label class="mono" for="fName" data-i18n="form.name">Ваше имя</label>
               <input type="text" id="fName" name="name" required data-i18n-placeholder="form.namePlaceholder" placeholder="Например, Алишер" autocomplete="name">
+              <small class="rfield__err mono" id="fNameErr" hidden data-i18n="form.required">Заполните это поле</small>
             </div>
             <div class="rfield">
               <label class="mono" for="fPhone" data-i18n="form.phone">Телефон</label>
               <input type="tel" id="fPhone" name="phone" required placeholder="+998 __ ___ __ __" autocomplete="tel">
+              <small class="rfield__err mono" id="fPhoneErr" hidden data-i18n="form.required">Заполните это поле</small>
             </div>
             <div class="rfield">
               <label class="mono" for="fBiz" data-i18n="form.business">Тип бизнеса</label>
@@ -695,10 +704,10 @@
           </form>
           <div class="zayavka__side">
             <p class="lead" data-i18n="zayavka.side">Или напишите нам напрямую — отвечаем быстро:</p>
-            <a class="btn btn--ghost btn--full" href="https://t.me/improsoftsupport" target="_blank" rel="noopener">Telegram → @improsoft</a>
+            <a class="btn btn--ghost btn--full" href="https://t.me/improsoftsupport" target="_blank" rel="noopener">Telegram → @improsoftsupport</a>
             <a class="btn btn--ghost btn--full mono" href="tel:+998935222020">+998 93 522 20 20</a>
             <a class="btn btn--ghost btn--full mono" href="tel:+998882188880">+998 88 218 88 80</a>
-            <p class="zayavka__note" data-i18n="zayavka.note">Приедем, покажем систему в работе и посчитаем стоимость под ваши задачи — бесплатно.</p>
+            <p class="zayavka__note" data-i18n="zayavka.note">Приедем, посмотрим вашу точку и посчитаем стоимость под ваши задачи — бесплатно.</p>
           </div>
         </div>
       </div>
@@ -731,11 +740,11 @@
     </div>
     <div class="frame tamom__bottom">
       <p>© <span id="year">2026</span> Improsoft · <span data-i18n="footer.rights">Все права защищены.</span></p>
-      <p class="mono tamom__colophon">Chizilgan Toshkentda · Нарисовано в Ташкенте · Drawn in Tashkent</p>
+      <p class="mono tamom__colophon">Navoiyda yaratilgan · Создано в Навои · Made in Navoi</p>
     </div>
   </footer>
 
-  <!-- Плавающий итог демо-кассы (мобильные): результат тапа всегда на экране -->
+  <!-- Плавающий итог мини-кассы (мобильные): результат тапа всегда на экране -->
   <button class="posbar" id="posBar" type="button">
     <span><span data-i18n="try.total">ИТОГО</span>: <b id="posBarSum">0</b> <span data-i18n="try.sum">сум</span></span>
     <span class="posbar__go" data-i18n="try.toReceipt">К чеку ↓</span>
