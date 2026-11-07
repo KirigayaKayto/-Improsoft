@@ -1,5 +1,5 @@
 /* ============================================================
-   Improsoft v3.4 — «BIR CHIZIQ» (Одна линия)
+   Improsoft v3.5 — «BIR CHIZIQ» (Одна линия)
    Гирих как инженерия: одна линия по правилу порождает узор —
    одна платформа порождает все продукты.
    Палитра: штукатурка-белый + зелёные чернила.
@@ -116,7 +116,7 @@ svg { display: block; }
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-bottom: 1px solid transparent;
-  transition: border-color .25s ease;
+  transition: border-color .25s ease, transform .3s ease;
 }
 .topbar.is-scrolled { border-bottom-color: var(--reed); }
 
@@ -599,10 +599,7 @@ svg { display: block; }
 }
 .shelf__dots { flex: 1; border-bottom: 2px dotted var(--reed); transform: translateY(-4px); }
 .shelf__row--total { border-top: 1px solid var(--reed); margin-top: 8px; padding-top: 12px; color: var(--green-deep); }
-/* лёгкий наклон живой бумаги */
-.ticket { transform: rotate(-1.2deg); }
-.shelf { transform: rotate(1.1deg); }
-.batch { transform: rotate(-1deg); }
+/* лёгкий наклон живой бумаги — углы заданы через --base в блоке «Движение» (3D-наклон за курсором) */
 
 .ticket__state {
   font-size: 12.5px;
@@ -828,8 +825,7 @@ svg { display: block; }
 }
 .timeline li {
   position: relative;
-  padding: 26px 22px 0 0;
-  border-top: 3px solid var(--green);
+  padding: 26px 22px 0 0; /* линия сверху — ::after, рисуется при появлении (блок «Движение») */
 }
 .timeline li::before {
   content: "";
@@ -1289,6 +1285,7 @@ html[lang="uz"] .sealmark text { font-size: 10px; letter-spacing: 0; }
   padding: 104px 0 88px;
   text-align: center;
   overflow: hidden;
+  overflow: clip;
 }
 .bigword__word {
   font-family: var(--font-display);
@@ -1307,7 +1304,7 @@ html[lang="uz"] .sealmark text { font-size: 10px; letter-spacing: 0; }
 }
 
 /* ============ Узлы-водяные знаки в главах ============ */
-.chapter { position: relative; overflow: hidden; }
+.chapter { position: relative; overflow: hidden; overflow: clip; } /* clip, а не hidden: не создаёт scroll-контейнер — нужно для animation-timeline: view() */
 .watermark {
   position: absolute;
   top: -50px; right: -80px;
@@ -1370,8 +1367,8 @@ html[lang="uz"] .sealmark text { font-size: 10px; letter-spacing: 0; }
   grid-template-columns: repeat(3, 1fr);
   gap: 32px;
   margin-top: 42px;
-  border-top: 3px solid var(--green);
-  padding-top: 28px;
+  position: relative; /* линия сверху — ::before, рисуется при появлении (блок «Движение») */
+  padding-top: 31px;
 }
 .daycard { position: relative; }
 .daycard::before {
@@ -1492,8 +1489,6 @@ html[lang="uz"] .sealmark text { font-size: 10px; letter-spacing: 0; }
   .dayline__grid {
     grid-template-columns: 1fr;
     gap: 40px;
-    border-top: none;
-    border-left: 3px solid var(--green);
     padding-top: 0;
     padding-left: 24px;
   }
@@ -1519,8 +1514,6 @@ html[lang="uz"] .sealmark text { font-size: 10px; letter-spacing: 0; }
   .ledgertable { grid-template-columns: 1fr; }
   .timeline { grid-template-columns: 1fr; gap: 0; }
   .timeline li {
-    border-top: none;
-    border-left: 3px solid var(--green);
     padding: 0 0 30px 22px;
   }
   .timeline li::before { top: 0; left: -8px; width: 14px; height: 3px; }
@@ -1555,8 +1548,8 @@ html[lang="uz"] .sealmark text { font-size: 10px; letter-spacing: 0; }
   .ticket__state { padding: 7px 10px; min-height: 32px; }
   .pmethod { padding: 9px 10px; }
   .posreceipt__total { font-size: 17px; }
-  /* наклоны бумаги на узком экране мешают — выпрямляем */
-  .ticket, .shelf, .batch, .posreceipt { transform: none; }
+  /* наклоны бумаги на узком экране мешают — выпрямляем (--base: 0deg — в блоке «Движение») */
+  .posreceipt { transform: none; }
   .bigword { padding: 64px 0 56px; }
   .daycard__art { max-width: 210px; }
 
@@ -1566,6 +1559,372 @@ html[lang="uz"] .sealmark text { font-size: 10px; letter-spacing: 0; }
 
   .underdrawn::before { left: -18px; width: 44px; height: 44px; }
 }
+
+/* ============================================================
+   v3.5 ДВИЖЕНИЕ — страница оживает
+   Только opacity / translate / transform; всё непрерывное —
+   на паузе вне экрана (.is-live), тяжёлое — только для мыши,
+   всё выключается при prefers-reduced-motion (см. ниже).
+   ============================================================ */
+
+/* --- scroll-reveal: блоки всплывают, как строки на чековой ленте --- */
+.js [data-reveal="up"],
+.js [data-reveal="stagger"] > :where(:not(.hero__line, .knot, [data-reveal])) {
+  opacity: 0;
+  translate: 0 16px;
+  transition: opacity .55s ease, translate .6s cubic-bezier(.2, .7, .2, 1);
+}
+.js [data-reveal="up"].is-in,
+.js [data-reveal="stagger"].is-in > :where(:not(.hero__line, .knot, [data-reveal])) { opacity: 1; translate: none; }
+.js [data-reveal="stagger"] > :nth-child(2) { transition-delay: 70ms; }
+.js [data-reveal="stagger"] > :nth-child(3) { transition-delay: 140ms; }
+.js [data-reveal="stagger"] > :nth-child(4) { transition-delay: 210ms; }
+.js [data-reveal="stagger"] > :nth-child(5) { transition-delay: 280ms; }
+.js [data-reveal="stagger"] > :nth-child(6) { transition-delay: 350ms; }
+.js [data-reveal="stagger"] > :nth-child(7) { transition-delay: 420ms; }
+.js [data-reveal="stagger"] > :nth-child(8) { transition-delay: 490ms; }
+.js [data-reveal="stagger"] > :nth-child(n + 9) { transition-delay: 560ms; }
+/* таблица-гроссбух печатается ячейка за ячейкой — общие рамки сетки не рвутся */
+.js [data-reveal="print"] > .lcell { opacity: 0; }
+.js [data-reveal="print"].is-in > .lcell { animation: printrow .5s ease both; }
+.js [data-reveal="print"].is-in > .lcell:nth-child(2) { animation-delay: 80ms; }
+.js [data-reveal="print"].is-in > .lcell:nth-child(3) { animation-delay: 160ms; }
+.js [data-reveal="print"].is-in > .lcell:nth-child(4) { animation-delay: 240ms; }
+.js [data-reveal="print"].is-in > .lcell:nth-child(5) { animation-delay: 320ms; }
+.js [data-reveal="print"].is-in > .lcell:nth-child(6) { animation-delay: 400ms; }
+
+/* --- hero: печатная строка, узор, параллакс линии --- */
+.hero, .dome, .ctaband, .try--dark { position: relative; overflow: hidden; overflow: clip; }
+.hero > .frame, .dome > .frame, .ctaband > .frame, .try--dark > .frame { position: relative; z-index: 1; }
+.hero__type {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--green-deep);
+  margin-top: 16px;
+  min-height: 1.6em;
+}
+.hero__type::before { content: "›"; margin-right: 10px; color: var(--green); font-weight: 700; }
+.caret {
+  display: inline-block;
+  width: 2px;
+  height: 1.15em;
+  margin-left: 4px;
+  background: var(--green);
+  animation: blink 1s steps(2, start) infinite;
+}
+@keyframes blink { to { visibility: hidden; } }
+.hero__line svg { transition: translate .5s cubic-bezier(.2, .7, .2, 1); }
+
+/* узор-гирих: очень бледная плитка, на десктопе медленно дрейфует (композитный слой) */
+.girih {
+  position: absolute;
+  top: -120px; left: -120px; right: 0; bottom: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120' fill='none' stroke='%23cbd9cf' stroke-width='1'%3E%3Cpath d='M 48 24 H 72 V 48 H 96 V 72 H 72 V 96 H 48 V 72 H 24 V 48 H 48 Z'/%3E%3Cpath d='M 60 8 L 112 60 L 60 112 L 8 60 Z'/%3E%3Cpath d='M 0 0 L 34 34 M 120 0 L 86 34 M 0 120 L 34 86 M 120 120 L 86 86'/%3E%3C/svg%3E");
+  background-size: 120px 120px;
+  opacity: .42;
+  animation: drift 70s linear infinite paused;
+}
+.girih--dark {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120' fill='none' stroke='%23f6f8f4' stroke-width='1'%3E%3Cpath d='M 48 24 H 72 V 48 H 96 V 72 H 72 V 96 H 48 V 72 H 24 V 48 H 48 Z'/%3E%3Cpath d='M 60 8 L 112 60 L 60 112 L 8 60 Z'/%3E%3Cpath d='M 0 0 L 34 34 M 120 0 L 86 34 M 0 120 L 34 86 M 120 120 L 86 86'/%3E%3C/svg%3E");
+  opacity: .07;
+}
+@keyframes drift { to { transform: translate3d(120px, 120px, 0); } }
+@media (hover: hover) and (pointer: fine) and (min-width: 1081px) {
+  .js [data-live].is-live > .girih { animation-play-state: running; }
+}
+
+/* --- лента-чек: возможности бегут, как чековая лента --- */
+.tape {
+  position: relative;
+  overflow: hidden;
+  background: var(--paper);
+  border-top: 1px solid var(--reed);
+  border-bottom: 1px solid var(--reed);
+}
+.tape::before, .tape::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0;
+  height: 7px;
+  z-index: 1;
+  background: repeating-linear-gradient(90deg, var(--reed) 0 9px, transparent 9px 18px);
+}
+.tape::before { top: -1px; }
+.tape::after { bottom: -1px; }
+.tape__belt {
+  display: flex;
+  width: max-content;
+  animation: tape 48s linear infinite paused;
+  will-change: transform;
+}
+.js .tape.is-live .tape__belt { animation-play-state: running; }
+@media (hover: hover) { .js .tape.is-live:hover .tape__belt { animation-play-state: paused; } }
+.tape__list { display: flex; flex: none; padding: 15px 0; }
+.tape__list li {
+  font-size: 12.5px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--green-deep);
+  white-space: nowrap;
+  padding-right: 34px;
+}
+.tape__list li::after { content: "✓"; margin-left: 14px; color: var(--green); }
+@keyframes tape { to { transform: translateX(-50%); } }
+
+/* --- наведение: карточки отвечают (только устройства с курсором) --- */
+.linklead .arrow { display: inline-block; font-style: normal; margin-left: 6px; }
+@media (hover: hover) {
+  .lcell { transition: background .25s ease, box-shadow .25s ease; }
+  .lcell:hover { background: var(--paper); box-shadow: inset 3px 0 0 var(--green); }
+  .lcell__tag { transition: border-color .25s ease; }
+  .lcell:hover .lcell__tag { border-color: var(--green); }
+  .tag { transition: translate .2s ease, border-color .2s ease; }
+  .tag:hover { translate: 0 -2px; border-color: var(--green); }
+  .cities li { transition: border-color .2s ease; }
+  .cities li:hover { border-color: var(--green); }
+  .daycard__art { transition: translate .3s ease; }
+  .daycard:hover .daycard__art { translate: 0 -3px; }
+  .timeline li:hover .timeline__num { color: var(--green-deep); }
+  .btn:hover { box-shadow: 0 8px 18px rgba(11, 46, 35, .16); }
+  .btn--light:hover, .btn--ghost:hover { box-shadow: none; }
+  .linklead .arrow { transition: translate .25s ease; }
+  .linklead:hover .arrow { translate: 4px 0; }
+  .faq__item summary span { transition: translate .2s ease; }
+  .faq__item summary:hover span { translate: 3px 0; }
+}
+
+/* 3D-наклон живой бумаги за курсором: базовый угол бумаги — в --base */
+.ticket { --base: -1.2deg; }
+.shelf { --base: 1.1deg; }
+.batch { --base: -1deg; }
+.ticket, .shelf, .batch { transform: rotate(var(--base)); }
+[data-tilt] { --rx: 0deg; --ry: 0deg; }
+@media (hover: hover) and (pointer: fine) {
+  .js [data-tilt] {
+    transform: perspective(700px) rotateX(var(--rx)) rotateY(var(--ry)) rotate(var(--base, 0deg));
+    transition: transform .18s ease;
+  }
+  .js .btn { transition: background .2s ease, border-color .2s ease, color .2s ease, transform .1s ease, box-shadow .2s ease, translate .25s ease; }
+}
+
+/* чернильное пятно курсора в тёмных главах */
+.inkglow {
+  display: none;
+  position: absolute;
+  top: 0; left: 0;
+  width: 520px; height: 520px;
+  margin: -260px 0 0 -260px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(169, 216, 190, .16), transparent 62%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .35s ease;
+  z-index: 0;
+}
+.inkglow.is-on { opacity: 1; }
+@media (hover: hover) and (pointer: fine) { .js .inkglow { display: block; } }
+
+/* --- купол: орбита продуктов, данные стекаются в ядро, радар --- */
+.dome__visual { position: relative; }
+.dome__orbit {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  transform-origin: 50% 50%;
+}
+.js .dome__visual.is-drawn .dome__orbit { animation: orbit 90s linear infinite paused; }
+.dome__satg { transform-box: fill-box; transform-origin: center; }
+.js .dome__visual.is-drawn .dome__satg { animation: orbit 90s linear infinite reverse paused; }
+.js .dome__visual.is-drawn.is-live .dome__orbit,
+.js .dome__visual.is-drawn.is-live .dome__satg { animation-play-state: running; }
+@keyframes orbit { to { transform: rotate(360deg); } }
+.dome__pulse {
+  fill: none;
+  stroke: var(--green-soft);
+  stroke-width: 2.5;
+  stroke-dasharray: 4 7;
+  stroke-linecap: round;
+  opacity: 0;
+  transition: opacity .6s ease 1.3s;
+}
+.js .dome__visual.is-drawn .dome__pulse { opacity: .9; animation: steamflow 2.2s linear infinite paused; }
+.js .dome__visual.is-drawn.is-live .dome__pulse { animation-play-state: running; }
+.dome__ring {
+  fill: none;
+  stroke: var(--green-soft);
+  stroke-width: 2;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.js .dome__visual.is-drawn .dome__ring { animation: radar 4s ease-out infinite paused; }
+.js .dome__visual.is-drawn.is-live .dome__ring { animation-play-state: running; }
+@keyframes radar {
+  from { opacity: .5; transform: scale(1); }
+  to   { opacity: 0; transform: scale(2.4); }
+}
+
+/* --- карта: всплеск при появлении города, пульс главного офиса, бегущий штрих --- */
+.city .city__ring {
+  fill: none;
+  stroke: var(--green);
+  stroke-width: 2;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.js .is-drawn .city__ring { animation: ring 1.1s ease-out 1 both; animation-delay: calc(var(--d) + 1s); }
+.js .is-drawn .city--hq .city__ring { animation-iteration-count: infinite; animation-duration: 2.6s; animation-play-state: paused; }
+.js .is-drawn.is-live .city--hq .city__ring { animation-play-state: running; }
+.city--hq > circle:not(.city__ring) { r: 9px; }
+@keyframes ring {
+  from { opacity: .7; transform: scale(1); }
+  to   { opacity: 0; transform: scale(3.2); }
+}
+.routepath--run {
+  fill: none;
+  stroke: var(--green-deep);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 26 1000;
+  opacity: 0;
+}
+.js .is-drawn .routepath--run {
+  opacity: 1;
+  transition: opacity .4s ease 1.6s;
+  animation: run 7s linear infinite paused;
+  animation-delay: 1.6s;
+}
+.js .is-drawn.is-live .routepath--run { animation-play-state: running; }
+@keyframes run { to { stroke-dashoffset: -1026; } }
+.hq--rep { margin-top: 12px; }
+
+/* --- позвоночник: кончик пера на конце линии --- */
+.spine__dot {
+  display: none;
+  position: absolute;
+  left: 50%; top: 0;
+  width: 11px; height: 11px;
+  margin: -5px 0 0 -5.5px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 0 4px rgba(93, 164, 122, .18), 0 0 14px rgba(93, 164, 122, .55);
+}
+.js .spine__dot { display: block; }
+
+/* --- гигантское слово: контур → заливка, при поддержке — рост по скроллу --- */
+.js .bigword__word { -webkit-text-stroke: 2px var(--green); color: transparent; }
+.js [data-reveal].is-in > .bigword__word { color: var(--green); transition: color .9s ease .25s, opacity .55s ease, translate .6s cubic-bezier(.2, .7, .2, 1); }
+.bigword { overflow: clip; }
+.chapter { overflow: clip; }
+@supports (animation-timeline: view()) {
+  .js .bigword__word {
+    opacity: 1;
+    translate: none;
+    transition: color .9s ease .25s;
+    animation: bigin linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 40%;
+  }
+  @keyframes bigin {
+    from { opacity: .15; transform: scale(.9) translateY(30px); }
+    to   { opacity: 1; transform: none; }
+  }
+  /* водяные знаки глав плывут навстречу прокрутке */
+  @media (min-width: 1081px) {
+    .js .watermark { animation: wdrift linear both; animation-timeline: view(); }
+  }
+  @keyframes wdrift {
+    from { transform: translateY(80px) rotate(-3deg); }
+    to   { transform: translateY(-80px) rotate(3deg); }
+  }
+}
+
+/* --- таймлайн и «один день»: линии рисуются, цифры всплывают --- */
+.timeline li::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--green);
+}
+.js .timeline[data-reveal="line"] li::after { transform: scaleX(0); transform-origin: left; transition: transform .55s cubic-bezier(.2, .7, .2, 1); }
+.js .timeline[data-reveal="line"].is-in li::after { transform: scaleX(1); }
+.js .timeline[data-reveal="line"] li:nth-child(2)::after { transition-delay: .45s; }
+.js .timeline[data-reveal="line"] li:nth-child(3)::after { transition-delay: .9s; }
+.js .timeline[data-reveal="line"] li:nth-child(4)::after { transition-delay: 1.35s; }
+.js .timeline[data-reveal="line"] li > span {
+  opacity: 0;
+  translate: 0 10px;
+  transition: opacity .45s ease, translate .45s ease, color .25s ease;
+}
+.js .timeline[data-reveal="line"].is-in li > span { opacity: 1; translate: none; }
+.js .timeline[data-reveal="line"] li:nth-child(1) > span { transition-delay: .3s; }
+.js .timeline[data-reveal="line"] li:nth-child(2) > span { transition-delay: .75s; }
+.js .timeline[data-reveal="line"] li:nth-child(3) > span { transition-delay: 1.2s; }
+.js .timeline[data-reveal="line"] li:nth-child(4) > span { transition-delay: 1.65s; }
+.dayline__grid::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--green);
+}
+.js .dayline__grid::before { transform: scaleX(0); transform-origin: left; transition: transform 1.1s cubic-bezier(.2, .7, .2, 1); }
+.js .dayline__grid.is-in::before { transform: scaleX(1); }
+@media (max-width: 1080px) {
+  .dayline__grid::before { top: 0; bottom: 0; left: 0; right: auto; width: 3px; height: auto; }
+  .js .dayline__grid::before { transform: scaleY(0); transform-origin: top; }
+  .js .dayline__grid.is-in::before { transform: scaleY(1); }
+}
+@media (max-width: 680px) {
+  .timeline li::after { top: 0; bottom: 0; left: 0; right: auto; width: 3px; height: auto; }
+  .js .timeline[data-reveal="line"] li::after { transform: scaleY(0); transform-origin: top; }
+  .js .timeline[data-reveal="line"].is-in li::after { transform: scaleY(1); }
+  .hero__type { font-size: 12.5px; }
+  .tape__list { padding: 12px 0; }
+  .ticket, .shelf, .batch { --base: 0deg; }
+  .city--hq > circle:not(.city__ring) { r: 15px; }
+}
+
+/* --- FAQ раскрывается плавно (печать ответа + анимация высоты там, где браузер умеет) --- */
+.faq__item > p { overflow: hidden; }
+.js .faq__item[open] > p { animation: printrow .35s ease both; }
+@supports (interpolate-size: allow-keywords) {
+  :root { interpolate-size: allow-keywords; }
+  .faq__item::details-content {
+    block-size: 0;
+    overflow: clip;
+    transition: block-size .3s ease, content-visibility .3s allow-discrete;
+  }
+  .faq__item[open]::details-content { block-size: auto; }
+}
+
+/* --- шапка: прячется при прокрутке вниз; активный пункт меню --- */
+.topbar.is-hidden { transform: translateY(-100%); }
+.topbar__nav a.is-active { color: var(--green-deep); border-bottom-color: var(--green); }
+
+/* --- подсказки интерактива: пульс-точка до первого касания, мигающая подпись --- */
+.dentry { position: relative; }
+.dentry:first-child::before, .pos__item:first-child::before {
+  content: "";
+  position: absolute;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--green);
+  opacity: 0;
+  pointer-events: none;
+}
+.dentry:first-child::before { left: -16px; top: 50%; margin-top: -5px; }
+.pos__item:first-child::before { top: -5px; left: -5px; }
+.js .daftar__board.is-in:not(.is-touched) .dentry:first-child::before,
+.js .try__grid.is-in .pos:not(.is-touched) .pos__item:first-child::before { animation: ring 1.6s ease-out 4; animation-delay: 1.5s; }
+.js .shelf:not(.is-used) .shelf__hint, .js .ticket:not(.is-touched) .ticket__hint { animation: hintblink 2.4s ease-in-out infinite; }
+@keyframes hintblink { 50% { opacity: .35; } }
 
 /* ============ Доступность и деградация ============ */
 @media (prefers-reduced-motion: reduce) {
@@ -1589,6 +1948,26 @@ html[lang="uz"] .sealmark text { font-size: 10px; letter-spacing: 0; }
   .stamp:active { transform: none; }
   .ticket__state, .pmethod { transition: none; }
   .dentry__hand::after { transition: none; }
+  /* v3.5: всё новое движение выключено, содержимое видно сразу */
+  .js [data-reveal="up"], .js [data-reveal="stagger"] > *, .js [data-reveal="print"] > .lcell,
+  .js .timeline[data-reveal="line"] li > span { opacity: 1; translate: none; transition: none; animation: none; }
+  .js .timeline[data-reveal="line"] li::after, .js .dayline__grid::before { transform: none; transition: none; }
+  .caret { animation: none; }
+  .girih, .tape__belt, .dome__orbit, .dome__satg, .dome__pulse, .dome__ring, .city__ring, .routepath--run,
+  .bigword__word, .watermark, .dentry::before, .pos__item::before, .shelf__hint, .ticket__hint,
+  .faq__item[open] > p { animation: none !important; }
+  .tape__belt { flex-wrap: wrap; width: auto; }
+  .tape__list { flex-wrap: wrap; justify-content: center; }
+  .tape__list[aria-hidden] { display: none; }
+  .dome__pulse, .routepath--run { opacity: 0 !important; }
+  .city__ring, .spine__dot, .inkglow { display: none !important; }
+  .js .bigword__word { color: var(--green); -webkit-text-stroke: 0; transition: none; }
+  .faq__item::details-content { transition: none; }
+  .js [data-tilt] { transform: rotate(var(--base, 0deg)); transition: none; }
+  .hero__line svg { translate: none !important; transition: none; }
+  .topbar { transition: none; }
+  .topbar.is-hidden { transform: none; }
+  .btn { translate: none !important; }
 }
 
 /* без JS вся графика дорисована и видима

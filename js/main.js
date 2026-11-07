@@ -1,9 +1,12 @@
 /* ============================================================
-   Improsoft v3.4 «BIR CHIZIQ» — логика:
+   Improsoft v3.5 «BIR CHIZIQ» — логика:
    линия-позвоночник, рисуемые узлы, дафтар (с повтором), язык-«печать»,
    мини-касса (сторно, номер чека), кухонный тикет (тап, часы),
    чек магазина («скан» остатка), даты партий от текущей даты,
-   форма-чек, липкая панель
+   форма-чек, липкая панель; v3.5: scroll-reveal, счётчики hero,
+   печатная строка, лента-чек, живое вне экрана на паузе (.is-live),
+   scrollspy, прячущаяся шапка, кончик пера, авто-подсказки,
+   наклон бумаги / магнит кнопок / чернильное пятно (только мышь)
    ============================================================ */
 
 (function () {
@@ -63,6 +66,10 @@
     });
 
     try { localStorage.setItem(STORAGE_KEY, lang); } catch (e) { /* приватный режим */ }
+
+    // v3.5: печатная строка начинает заново на новом языке, лента подстраивает скорость под длину текста
+    restartTypewriter();
+    syncTapeSpeed();
   }
 
   /* даты партий: A — через 17 месяцев (OK), B — через 2 (СКОРО); никогда не устаревают */
@@ -118,6 +125,8 @@
 
   /* ---------- Позвоночник: заполнение по прокрутке ---------- */
   var spineFill = document.getElementById("spineFill");
+  var spineDot = document.getElementById("spineDot"); // кончик пера на конце линии
+  var lastY = 0;
   function onScroll() {
     if (ticking) return;
     ticking = true;
@@ -128,7 +137,15 @@
       // квантуем до 1%, чтобы не дёргать стиль каждый пиксель
       p = Math.round(p * 100) / 100;
       spineFill.style.transform = "scaleY(" + p + ")";
-      topbar.classList.toggle("is-scrolled", window.scrollY > 8);
+      if (spineDot) spineDot.style.top = (p * 100) + "%";
+      var y = window.scrollY;
+      topbar.classList.toggle("is-scrolled", y > 8);
+      // шапка прячется при прокрутке вниз и возвращается при прокрутке вверх
+      if (!reducedMotion) {
+        if (y > 240 && y > lastY + 4) topbar.classList.add("is-hidden");
+        else if (y < lastY - 4 || y <= 240) topbar.classList.remove("is-hidden");
+      }
+      lastY = y;
       ticking = false;
     });
   }
@@ -153,11 +170,11 @@
         }
       });
     }, { threshold: 0.35 });
-    document.querySelectorAll(".hero__line, .knot, .dome__visual, .route__map").forEach(function (el) {
+    document.querySelectorAll(".hero__line, .knot, .dome__visual, .route__map, .tamom__mark").forEach(function (el) {
       drawIO.observe(el);
     });
   } else {
-    document.querySelectorAll(".hero__line, .knot, .dome__visual, .route__map").forEach(function (el) {
+    document.querySelectorAll(".hero__line, .knot, .dome__visual, .route__map, .tamom__mark").forEach(function (el) {
       el.classList.add("is-drawn");
     });
   }
@@ -167,6 +184,7 @@
 
   /* ---------- Дафтар: тап-реконсиляция ---------- */
   var entries = document.querySelectorAll(".dentry");
+  var daftarBoard = document.querySelector(".daftar__board");
   var doneCount = 0;
   var daftarRun = 0;   // токен: «Начать заново» обесценивает отложенные таймеры
   var allBtn = document.getElementById("daftarAll");
@@ -187,6 +205,7 @@
     if (entry.classList.contains("is-done")) return;
     entry.classList.add("is-done");
     entry.setAttribute("aria-disabled", "true");
+    if (daftarBoard) daftarBoard.classList.add("is-touched"); // подсказка-пульс больше не нужна
     document.getElementById("daftarEmpty").hidden = true;
     var row = document.querySelector('.daftar__ledger .lrow[data-row="' + entry.getAttribute("data-row") + '"]');
     if (row) {
@@ -240,6 +259,21 @@
       delay += reducedMotion ? 0 : 260;
     });
   });
+
+  // авто-подсказка (десктоп): дафтар на экране, никто не нажимал — первая запись проводится сама
+  if (daftarBoard && entries.length && "IntersectionObserver" in window && !reducedMotion) {
+    var daftarAutoIO = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        daftarAutoIO.disconnect();
+        setTimeout(function () {
+          if (mobileDaftar.matches || daftarBoard.classList.contains("is-touched")) return;
+          reconcile(entries[0]);
+        }, 1600);
+      });
+    }, { threshold: 0.6 });
+    daftarAutoIO.observe(daftarBoard);
+  }
 
   /* ---------- Кухонный тикет: живые статусы, тап «подано», часы ---------- */
   var ticket = document.getElementById("cafeTicket");
@@ -532,6 +566,8 @@
     document.querySelectorAll(".pos__item").forEach(function (btn) {
       btn.addEventListener("click", function () {
         var key = btn.getAttribute("data-name");
+        var posPanel = btn.closest(".pos");
+        if (posPanel) posPanel.classList.add("is-touched"); // подсказка-пульс больше не нужна
         var found = null;
         posOrder.forEach(function (it) { if (it.key === key) found = it; });
         if (found) {
@@ -633,7 +669,20 @@
     });
   }
 
-  /* ---------- Счётчик клиентов (оживёт вместе с секцией .proof) ---------- */
+  /* ---------- Счётчики: число «допечатывается» (цифры hero и будущая секция .proof) ---------- */
+  function countUp(el, target, dur) {
+    if (reducedMotion) { el.textContent = String(target); return; }
+    var start = null;
+    var stepFn = function (ts) {
+      if (!start) start = ts;
+      var p = Math.min((ts - start) / dur, 1);
+      var e = 1 - Math.pow(1 - p, 3); // ease-out
+      el.textContent = String(Math.round(target * e));
+      if (p < 1) requestAnimationFrame(stepFn);
+    };
+    requestAnimationFrame(stepFn);
+  }
+
   var proofNum = document.getElementById("proofNum");
   if (proofNum && "IntersectionObserver" in window) {
     var proofTarget = parseInt(proofNum.getAttribute("data-target"), 10) || 0;
@@ -641,19 +690,191 @@
       entries4.forEach(function (entry) {
         if (!entry.isIntersecting) return;
         proofIO.disconnect();
-        if (reducedMotion) { proofNum.textContent = String(proofTarget); return; }
-        var start = null;
-        var stepFn = function (ts) {
-          if (!start) start = ts;
-          var p = Math.min((ts - start) / 1200, 1);
-          proofNum.textContent = String(Math.round(proofTarget * p));
-          if (p < 1) requestAnimationFrame(stepFn);
-        };
-        requestAnimationFrame(stepFn);
+        countUp(proofNum, proofTarget, 1200);
       });
     }, { threshold: 0.6 });
     proofIO.observe(proofNum);
   }
+
+  // цифры hero (3 / 7 / 4) допечатываются, когда линия дорисовала насечки (~1.15 с после загрузки)
+  var heroCounts = document.querySelectorAll(".hero [data-count]");
+  if (heroCounts.length && !reducedMotion) {
+    heroCounts.forEach(function (b) { b.textContent = "0"; });
+    setTimeout(function () {
+      heroCounts.forEach(function (b) { countUp(b, parseInt(b.getAttribute("data-count"), 10) || 0, 600); });
+    }, 1150);
+  }
+
+  /* ---------- v3.5: scroll-reveal — блоки всплывают, как строки на чековой ленте ---------- */
+  var revealEls = document.querySelectorAll("[data-reveal]");
+  if ("IntersectionObserver" in window) {
+    var revealIO = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        // показываем и то, что уже выше экрана (перезагрузка посреди страницы, переход по якорю)
+        if (e.isIntersecting || e.boundingClientRect.bottom < 0) {
+          e.target.classList.add("is-in");
+          revealIO.unobserve(e.target);
+        }
+      });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.01 });
+    revealEls.forEach(function (el) { revealIO.observe(el); });
+  } else {
+    revealEls.forEach(function (el) { el.classList.add("is-in"); });
+  }
+
+  /* ---------- v3.5: непрерывные анимации живут только на экране (бережём батарею) ---------- */
+  var liveEls = document.querySelectorAll("[data-live]");
+  if ("IntersectionObserver" in window) {
+    var liveIO = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { e.target.classList.toggle("is-live", e.isIntersecting); });
+    }, { threshold: 0 });
+    liveEls.forEach(function (el) { liveIO.observe(el); });
+  } else {
+    liveEls.forEach(function (el) { el.classList.add("is-live"); });
+  }
+
+  /* ---------- v3.5: печатная строка hero — касса для кафе → учёт для магазина → партии для аптеки ---------- */
+  var typeEl = document.getElementById("heroType");
+  var heroSec = document.querySelector(".hero");
+  var typeTimer = null;
+  function restartTypewriter() {
+    if (!typeEl) return;
+    if (typeTimer) { clearTimeout(typeTimer); typeTimer = null; }
+    var dict = I18N[currentLang];
+    var phrases = [dict["hero.type1"], dict["hero.type2"], dict["hero.type3"]].filter(Boolean);
+    if (!phrases.length) return;
+    typeEl.textContent = phrases[0]; // первая фраза уже напечатана
+    if (reducedMotion) return;
+    var pi = 0, ci = phrases[0].length, deleting = false;
+    function tick() {
+      var wait;
+      if (document.hidden || (heroSec && !heroSec.classList.contains("is-live"))) {
+        wait = 600; // вкладка или hero за кадром — просто ждём
+      } else if (!deleting && ci === phrases[pi].length) {
+        deleting = true; wait = 1900; // пауза, чтобы прочитать
+      } else if (deleting && ci === 0) {
+        deleting = false; pi = (pi + 1) % phrases.length; wait = 350;
+      } else {
+        ci += deleting ? -1 : 1;
+        typeEl.textContent = phrases[pi].slice(0, ci);
+        wait = deleting ? 28 : 58;
+      }
+      typeTimer = setTimeout(tick, wait);
+    }
+    typeTimer = setTimeout(tick, 2200);
+  }
+  restartTypewriter();
+
+  /* ---------- v3.5: лента-чек — дубликат списка для бесшовного цикла, скорость от длины текста ---------- */
+  var tapeBelt = document.getElementById("tapeBelt");
+  var tapeList = tapeBelt ? tapeBelt.querySelector(".tape__list") : null;
+  if (tapeBelt && tapeList && !tapeBelt.querySelector("[aria-hidden]")) {
+    var tapeClone = tapeList.cloneNode(true); // клон хранит data-i18n — переводится вместе со всеми
+    tapeClone.setAttribute("aria-hidden", "true");
+    tapeBelt.appendChild(tapeClone);
+  }
+  function syncTapeSpeed() {
+    if (!tapeBelt || !tapeList) return;
+    var w = tapeList.offsetWidth;
+    if (w) tapeBelt.style.animationDuration = Math.max(30, Math.round(w / 42)) + "s"; // ~42px/с
+  }
+  syncTapeSpeed();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncTapeSpeed);
+
+  /* ---------- v3.5: активный пункт меню по прокрутке ---------- */
+  var navLinks = document.querySelectorAll(".topbar__nav a[href^='#']");
+  if (navLinks.length && "IntersectionObserver" in window) {
+    var spyMap = {
+      chizma: "", daftar: "", try: "", rules: "",
+      cafe: "#cafe", market: "#cafe", pharm: "#cafe",
+      platform: "#platform", day: "", ustalik: "",
+      route: "#route", days: "", faq: "#zayavka", zayavka: "#zayavka"
+    };
+    var spyIO = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        var href = spyMap[e.target.id];
+        navLinks.forEach(function (a) {
+          var on = !!href && a.getAttribute("href") === href;
+          a.classList.toggle("is-active", on);
+          if (on) a.setAttribute("aria-current", "true"); else a.removeAttribute("aria-current");
+        });
+      });
+    }, { rootMargin: "-35% 0px -55% 0px", threshold: 0 });
+    Object.keys(spyMap).forEach(function (id) {
+      var s = document.getElementById(id);
+      if (s) spyIO.observe(s);
+    });
+  }
+
+  /* ---------- v3.5: эффекты для мыши — наклон бумаги, магнит кнопок, чернильное пятно, параллакс линии ---------- */
+  var finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  if (finePointer && !reducedMotion) {
+    // 3D-наклон: бумага поворачивается к курсору (углы — CSS-переменные, transform в styles.css)
+    document.querySelectorAll("[data-tilt]").forEach(function (el) {
+      var max = parseFloat(el.getAttribute("data-tilt")) || 6;
+      var raf = null, lx = 0, ly = 0;
+      el.addEventListener("pointermove", function (e) {
+        var r = el.getBoundingClientRect();
+        lx = (e.clientX - r.left) / r.width - 0.5;
+        ly = (e.clientY - r.top) / r.height - 0.5;
+        if (raf) return;
+        raf = requestAnimationFrame(function () {
+          el.style.setProperty("--ry", (lx * max * 2).toFixed(2) + "deg");
+          el.style.setProperty("--rx", (-ly * max * 2).toFixed(2) + "deg");
+          raf = null;
+        });
+      });
+      el.addEventListener("pointerleave", function () {
+        el.style.setProperty("--rx", "0deg");
+        el.style.setProperty("--ry", "0deg");
+      });
+    });
+
+    // магнит: кнопка чуть тянется к курсору (не более ~6px)
+    document.querySelectorAll(".btn:not(.btn--full)").forEach(function (b) {
+      b.addEventListener("pointermove", function (e) {
+        var r = b.getBoundingClientRect();
+        var dx = e.clientX - (r.left + r.width / 2);
+        var dy = e.clientY - (r.top + r.height / 2);
+        b.style.translate = (dx * 0.18).toFixed(1) + "px " + (dy * 0.18).toFixed(1) + "px";
+      });
+      b.addEventListener("pointerleave", function () { b.style.translate = ""; });
+    });
+
+    // чернильное пятно в тёмных главах: мягкий свет следует за курсором
+    document.querySelectorAll(".inkglow").forEach(function (g) {
+      var sec = g.parentNode, raf2 = null, px = 0, py = 0;
+      sec.addEventListener("pointermove", function (e) {
+        var r = sec.getBoundingClientRect();
+        px = e.clientX - r.left; py = e.clientY - r.top;
+        if (raf2) return;
+        raf2 = requestAnimationFrame(function () {
+          g.style.transform = "translate3d(" + Math.round(px) + "px," + Math.round(py) + "px,0)";
+          g.classList.add("is-on");
+          raf2 = null;
+        });
+      });
+      sec.addEventListener("pointerleave", function () { g.classList.remove("is-on"); });
+    });
+
+    // линия hero чуть смещается за курсором
+    var heroLineSvg = document.querySelector(".hero__line svg");
+    if (heroSec && heroLineSvg) {
+      var hraf = null, hx = 0, hy = 0;
+      heroSec.addEventListener("pointermove", function (e) {
+        hx = e.clientX / window.innerWidth - 0.5;
+        hy = e.clientY / window.innerHeight - 0.5;
+        if (hraf) return;
+        hraf = requestAnimationFrame(function () {
+          heroLineSvg.style.translate = (hx * 12).toFixed(1) + "px " + (hy * 8).toFixed(1) + "px";
+          hraf = null;
+        });
+      });
+      heroSec.addEventListener("pointerleave", function () { heroLineSvg.style.translate = ""; });
+    }
+  }
+
 
   /* ---------- Год ---------- */
   document.getElementById("year").textContent = String(new Date().getFullYear());
