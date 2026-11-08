@@ -21,7 +21,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&family=Golos+Text:wght@400;500;600&family=Neucha&family=Poppins:wght@400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=4.0.0">
+  <link rel="stylesheet" href="css/styles.css?v=4.1.0">
 </head>
 <body>
 
@@ -185,7 +185,7 @@
           <li class="chip chip--ghost"><svg class="ico" aria-hidden="true"><use href="#i-wifi-off"/></svg><span data-i18n="tape.i6">Работает офлайн</span></li>
           <li class="chip chip--ghost"><svg class="ico" aria-hidden="true"><use href="#i-box"/></svg><span data-i18n="tape.i7">Склад и остатки</span></li>
           <li class="chip chip--ghost"><svg class="ico" aria-hidden="true"><use href="#i-chart"/></svg><span data-i18n="tape.i8">Отчёты за день</span></li>
-          <li class="chip chip--ghost"><svg class="ico" aria-hidden="true"><use href="#i-monitor"/></svg><span data-i18n="tape.i9">Кухонный экран</span></li>
+          <li class="chip chip--ghost"><svg class="ico" aria-hidden="true"><use href="#i-monitor"/></svg><span data-i18n="tape.i9">Калькуляция блюд</span></li>
           <li class="chip chip--ghost"><svg class="ico" aria-hidden="true"><use href="#i-shield"/></svg><span data-i18n="tape.i10">DMED для аптек</span></li>
           <li class="chip chip--ghost"><svg class="ico" aria-hidden="true"><use href="#i-zap"/></svg><span data-i18n="tape.i11">Запуск за 4 дня</span></li>
           <li class="chip chip--ghost"><svg class="ico" aria-hidden="true"><use href="#i-headset"/></svg><span data-i18n="tape.i12">Поддержка по-узбекски и по-русски</span></li>
@@ -287,7 +287,7 @@
             </aside>
           </div>
         </div>
-        <p class="try__note" data-i18n="try.note">Это упрощённая модель кассы. В настоящей Improcafe есть ещё кухня, склад и отчёты.</p>
+        <p class="try__note" data-i18n="try.note">Это упрощённая модель кассы. В настоящей Improcafe есть ещё калькуляция блюд, склад и отчёты.</p>
       </div>
     </section>
 
@@ -323,7 +323,7 @@
       </div>
     </section>
 
-    <!-- ===== 5. Improcafe: кухонный экран ===== -->
+    <!-- ===== 5. Improcafe: калькуляция блюда (технологическая карта) ===== -->
     <section class="section section--tint product" id="cafe">
       <div class="frame product__grid">
         <div class="product__text" data-reveal="stagger">
@@ -332,8 +332,9 @@
           <p class="lead" data-i18n="products.cafe.desc">Система автоматизации для кафе, ресторанов, баров, столовых и фуд-кортов.</p>
           <ul class="checks">
             <li><span class="tile tile--sm"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg></span><span data-i18n="products.cafe.f1">Терминал официанта и кассира</span></li>
-            <li><span class="tile tile--sm"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg></span><span data-i18n="products.cafe.f2">Кухонный экран заказов</span></li>
-            <li><span class="tile tile--sm"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg></span><span data-i18n="products.cafe.f3">Калькуляция блюд и склад</span></li>
+            <li><span class="tile tile--sm"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg></span><span data-i18n="products.cafe.f2">Технологические карты и себестоимость блюд</span></li>
+            <li><span class="tile tile--sm"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg></span><span data-i18n="products.cafe.f6">Печать заказов на кухню на чек-принтере</span></li>
+            <li><span class="tile tile--sm"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg></span><span data-i18n="products.cafe.f3">Склад и приход продуктов</span></li>
             <li><span class="tile tile--sm"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg></span><span data-i18n="products.cafe.f4">Отчёты по выручке и персоналу</span></li>
             <li><span class="tile tile--sm"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg></span><span data-i18n="products.cafe.f5">Фискальные чеки, оплата Payme, Click, Uzum Bank и в долг</span></li>
           </ul>
@@ -341,32 +342,39 @@
         </div>
         <div class="product__visual" data-reveal="up">
           <div class="device device--tablet" data-tilt="3">
-            <!-- кухонный экран заказов -->
-            <div class="device__screen app kds" lang="ru">
+            <!-- технологическая карта: «Добавить ингредиент» достраивает состав и пересчитывает себестоимость; без JS карта показана целиком -->
+            <div class="device__screen app tcard" lang="ru">
               <div class="app__title">
                 <span class="app__user"><svg class="ico"><use href="#i-users"/></svg>Сменить пользователя</span>
-                <span class="app__crumbs"><b>IMPROCAFE</b><i>|</i>Кухня<i>|</i>Экран заказов</span>
-                <span class="app__sys"><span>Обновить</span><span data-clock id="ticketClock">12:47</span></span>
+                <span class="app__crumbs"><b>IMPROCAFE</b><i>|</i>Конфигуратор<i>|</i>Калькуляция</span>
+                <span class="app__sys"><span>Обновить</span><span>МЕНЮ</span><svg class="ico"><use href="#i-menu"/></svg></span>
               </div>
-              <div class="app__tabs">
-                <span class="app__tab app__tab--active">Все заказы</span>
-                <span class="app__tab app__tab--green">В работе</span>
-                <span class="app__tab">Готово</span>
-                <span class="app__tab app__tab--brown">Отданные</span>
-              </div>
-              <div class="app__body kds__grid">
-                <article class="kcard ticket" id="cafeTicket">
-                  <header class="kcard__head"><b data-i18n="cafe.ticketHead">Стол 7</b><span class="num">#<span id="ticketNo">0214</span></span></header>
-                  <div class="ticket__row"><span data-i18n="cafe.dish1">Лагман · 2</span><button type="button" class="ticket__state" data-state="cook">готовится</button></div>
-                  <div class="ticket__row"><span data-i18n="cafe.dish2">Шашлык · 4</span><button type="button" class="ticket__state" data-state="cook">готовится</button></div>
-                  <div class="ticket__row"><span data-i18n="cafe.dish3">Чай · 1</span><button type="button" class="ticket__state" data-state="done">подано</button></div>
-                  <p class="ticket__hint" data-i18n="cafe.tapHint">Нажмите «готовится», чтобы отдать блюдо</p>
-                </article>
-                <article class="kcard kcard--ghost" aria-hidden="true">
-                  <header class="kcard__head"><b>Стол 3</b><span class="num">#0215</span></header>
-                  <div class="ticket__row"><span data-i18n="try.i1">Плов</span><span class="ticket__state" data-state="cook">готовится</span></div>
-                  <div class="ticket__row"><span data-i18n="try.i6">Чой</span><span class="ticket__state" data-state="done">подано</span></div>
-                </article>
+              <div class="tcard__win">
+                <div class="tcard__titlebar"><span><b>Технологическая карта</b> — Добавление</span><span class="tcard__sysbtns"><span>☐ Автоповтор</span><i>✕</i></span></div>
+                <div class="tcard__form">
+                  <span class="tcard__f"><span class="tcard__lbl">Наименование карты</span><b class="tcard__in tcard__in--wide" data-i18n="cafe.dish">Плов</b></span>
+                  <span class="tcard__f"><span class="tcard__lbl">Кол-во на выходе</span><b class="tcard__in">1</b><span>пор.</span></span>
+                  <span class="tcard__f"><span class="tcard__lbl">Вес</span><b class="tcard__in" id="tcWeight">0.396</b><span>кг</span></span>
+                  <span class="tcard__f tcard__f--select"><span class="tcard__lbl">Расчёт себестоимости</span><b class="tcard__in tcard__in--select">По последней приходной</b></span>
+                </div>
+                <div class="tcard__section">Состав</div>
+                <div class="gridtbl gridtbl--tc">
+                  <div class="gridtbl__head"><span>№</span><span>Номенклатура</span><span>Кол-во брутто</span><span>Ед. изм.</span><span>% потери</span><span>Выход нетто</span><span>Себестоим.</span><span>Сумма</span></div>
+                  <div class="gridtbl__row tcard__row" data-b="0.120" data-n="0.120" data-s="2160"><span>1</span><span data-i18n="cafe.ing1">Рис</span><span class="num tcard__cell">0.120</span><span>кг</span><span class="num tcard__cell">0</span><span class="num">0.120</span><span class="num">18 000</span><span class="num tcard__sum">2 160</span></div>
+                  <div class="gridtbl__row tcard__row" data-b="0.100" data-n="0.100" data-s="9500"><span>2</span><span data-i18n="cafe.ing2">Говядина</span><span class="num tcard__cell">0.100</span><span>кг</span><span class="num tcard__cell">0</span><span class="num">0.100</span><span class="num">95 000</span><span class="num tcard__sum">9 500</span></div>
+                  <div class="gridtbl__row tcard__row" data-b="0.100" data-n="0.080" data-s="600"><span>3</span><span data-i18n="cafe.ing3">Морковь</span><span class="num tcard__cell">0.100</span><span>кг</span><span class="num tcard__cell">20</span><span class="num">0.080</span><span class="num">6 000</span><span class="num tcard__sum">600</span></div>
+                  <div class="gridtbl__row tcard__row" data-b="0.040" data-n="0.034" data-s="160"><span>4</span><span data-i18n="cafe.ing4">Лук репчатый</span><span class="num tcard__cell">0.040</span><span>кг</span><span class="num tcard__cell">15</span><span class="num">0.034</span><span class="num">4 000</span><span class="num tcard__sum">160</span></div>
+                  <div class="gridtbl__row tcard__row" data-b="0.040" data-n="0.040" data-s="960"><span>5</span><span data-i18n="cafe.ing5">Масло хлопковое</span><span class="num tcard__cell">0.040</span><span>кг</span><span class="num tcard__cell">0</span><span class="num">0.040</span><span class="num">24 000</span><span class="num tcard__sum">960</span></div>
+                  <div class="gridtbl__row tcard__row" data-b="0.020" data-n="0.020" data-s="400"><span>6</span><span data-i18n="cafe.ing6">Нут</span><span class="num tcard__cell">0.020</span><span>кг</span><span class="num tcard__cell">0</span><span class="num">0.020</span><span class="num">20 000</span><span class="num tcard__sum">400</span></div>
+                  <div class="gridtbl__row tcard__row" data-b="0.002" data-n="0.002" data-s="300"><span>7</span><span data-i18n="cafe.ing7">Зира</span><span class="num tcard__cell">0.002</span><span>кг</span><span class="num tcard__cell">0</span><span class="num">0.002</span><span class="num">150 000</span><span class="num tcard__sum">300</span></div>
+                </div>
+                <div class="tcard__foot"><span>ИТОГО: <b id="tcBrutto">0.422</b></span><span>Вес <b id="tcNetto">0.396</b></span><span>Сумма <b id="tcSum">14 080</b></span></div>
+                <div class="tcard__actions">
+                  <p class="tcard__hint" id="tcHint" data-i18n="cafe.tapHint">Нажмите «Добавить» — себестоимость пересчитается</p>
+                  <p class="tcard__toast" id="tcToast" hidden data-i18n="cafe.saved">Карта сохранена ✓ · себестоимость порции 14 080 сум</p>
+                  <button type="button" class="appbtn tcard__add" id="tcAdd"><span data-i18n="cafe.add">Добавить ингредиент</span><span data-i18n="cafe.save" hidden>Сохранить карту</span><span data-i18n="cafe.again" hidden>Начать заново</span></button>
+                  <span class="tcard__cancel">Отмена</span>
+                </div>
               </div>
             </div>
           </div>
@@ -507,7 +515,7 @@
           <article class="card daycard">
             <div class="daycard__top"><span class="chip">08:00</span><span class="tile"><svg class="ico" aria-hidden="true"><use href="#i-utensils"/></svg></span></div>
             <h3 class="h3" data-i18n="day.h1">Чайхана</h3>
-            <p data-i18n="day.d1">Официант принял заказ с планшета — кухня уже готовит. Ни одной бумажки.</p>
+            <p data-i18n="day.d1">Кассир пробил заказ в Improcafe: фискальный чек напечатан, оплата Payme прошла. Ни одной бумажки.</p>
           </article>
           <article class="card daycard">
             <div class="daycard__top"><span class="chip">13:00</span><span class="tile"><svg class="ico" aria-hidden="true"><use href="#i-store"/></svg></span></div>
@@ -722,9 +730,9 @@
           <aside class="card contact">
             <p class="lead" data-i18n="zayavka.side">Или напишите нам напрямую — отвечаем быстро:</p>
             <a class="btn btn--full" href="https://t.me/improsoftsupport" target="_blank" rel="noopener"><svg class="ico" aria-hidden="true"><use href="#i-send"/></svg>Telegram · @improsoftsupport</a>
-            <a class="btn btn--secondary btn--full" href="tel:+998935222020"><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg><span class="num">+998 93 522 20 20</span>&nbsp;·&nbsp;<span data-i18n="city.navoi">Навои</span></a>
-            <a class="btn btn--secondary btn--full" href="tel:+998882188880"><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg><span class="num">+998 88 218 88 80</span>&nbsp;·&nbsp;<span data-i18n="city.navoi">Навои</span></a>
-            <a class="btn btn--secondary btn--full" href="tel:+998974130364"><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg><span class="num">+998 97 413 03 64</span>&nbsp;·&nbsp;<span data-i18n="city.andijan">Андижан</span></a>
+            <a class="btn btn--secondary btn--full" href="tel:+998935222020"><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg><span class="num">+998 93 522 20 20</span><span class="contact__city" data-i18n="city.navoi">Навои</span></a>
+            <a class="btn btn--secondary btn--full" href="tel:+998882188880"><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg><span class="num">+998 88 218 88 80</span><span class="contact__city" data-i18n="city.navoi">Навои</span></a>
+            <a class="btn btn--secondary btn--full" href="tel:+998974130364"><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg><span class="num">+998 97 413 03 64</span><span class="contact__city" data-i18n="city.andijan">Андижан</span></a>
             <p class="contact__note" data-i18n="zayavka.note">Приедем, посмотрим вашу точку и посчитаем стоимость под ваши задачи — бесплатно.</p>
           </aside>
         </div>
@@ -771,7 +779,7 @@
     <a class="btn" href="https://t.me/improsoftsupport" target="_blank" rel="noopener"><svg class="ico" aria-hidden="true"><use href="#i-send"/></svg>Telegram</a>
   </div>
 
-  <script src="js/i18n.js?v=4.0.0"></script>
-  <script src="js/main.js?v=4.0.0"></script>
+  <script src="js/i18n.js?v=4.1.0"></script>
+  <script src="js/main.js?v=4.1.0"></script>
 </body>
 </html>

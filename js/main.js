@@ -47,11 +47,6 @@
 
     document.title = dict["meta.title"];
 
-    // статусы кухонного экрана живут в data-state — переводим по нему
-    document.querySelectorAll(".ticket__state").forEach(function (s) {
-      s.textContent = dict[s.getAttribute("data-state") === "done" ? "cafe.served" : "cafe.cooking"];
-    });
-
     // даты партий (Pharm) считаются от сегодняшнего дня
     renderPharmDates(lang);
 
@@ -347,69 +342,67 @@
     daftarAutoIO.observe(daftarBoard);
   }
 
-  /* ---------- Кухонный экран: живые статусы, тап «подано» ---------- */
-  var ticket = document.getElementById("cafeTicket");
-  var ticketTimer = null;
-  var ticketNo = 214;
+  /* ---------- Калькуляция блюда: «Добавить ингредиент» достраивает состав ---------- */
+  var tcard = document.querySelector(".tcard");
+  if (tcard) {
+    var tcRows = Array.prototype.slice.call(tcard.querySelectorAll(".tcard__row"));
+    var tcStart = 3; // сколько строк состава видно на старте
+    var tcState = "add";
+    var tcAdd = document.getElementById("tcAdd");
+    var tcToast = document.getElementById("tcToast");
 
-  function serveState(s) {
-    s.setAttribute("data-state", "done");
-    s.textContent = I18N[currentLang]["cafe.served"];
-  }
-
-  function tickTicket() {
-    var states = ticket.querySelectorAll(".ticket__state");
-    var cooking = [];
-    states.forEach(function (s) { if (s.getAttribute("data-state") === "cook") cooking.push(s); });
-    var dict = I18N[currentLang];
-    if (cooking.length === 0) {
-      // всё подано — новый заказ: статусы обратно, номер растёт, строки появляются
-      states.forEach(function (s) {
-        s.setAttribute("data-state", "cook");
-        s.textContent = dict["cafe.cooking"];
+    var tcSet = function (id, v, dec) {
+      var el = document.getElementById(id);
+      if (el) el.textContent = dec ? v.toFixed(dec) : fmtSum(v);
+    };
+    var recalcTc = function () {
+      var b = 0, n = 0, s = 0;
+      tcRows.forEach(function (r) {
+        if (r.hidden) return;
+        b += parseFloat(r.getAttribute("data-b")) || 0;
+        n += parseFloat(r.getAttribute("data-n")) || 0;
+        s += parseInt(r.getAttribute("data-s"), 10) || 0;
       });
-      ticketNo++;
-      var noEl = document.getElementById("ticketNo");
-      if (noEl) noEl.textContent = ("000" + ticketNo).slice(-4);
-      if (!reducedMotion) {
-        ticket.classList.remove("is-new");
-        void ticket.offsetWidth;
-        ticket.classList.add("is-new");
-      }
-    } else {
-      serveState(cooking[0]);
+      tcSet("tcBrutto", b, 3);
+      tcSet("tcNetto", n, 3);
+      tcSet("tcWeight", n, 3);
+      tcSet("tcSum", s);
+    };
+    // подпись кнопки — три спана с data-i18n, показываем нужный (перевод делает applyLang)
+    var tcLabel = function (state) {
+      tcState = state;
+      var keys = { add: "cafe.add", save: "cafe.save", again: "cafe.again" };
+      if (tcAdd) tcAdd.querySelectorAll("[data-i18n]").forEach(function (sp) { sp.hidden = sp.getAttribute("data-i18n") !== keys[state]; });
+    };
+    var tcReset = function () {
+      tcRows.forEach(function (r, i) { r.hidden = i >= tcStart; r.classList.remove("is-new"); });
+      if (tcToast) tcToast.hidden = true;
+      recalcTc();
+      tcLabel("add");
+    };
+    tcReset();
+
+    if (tcAdd) {
+      tcAdd.addEventListener("click", function () {
+        tcard.classList.add("is-used");
+        if (tcState === "add") {
+          var next = null;
+          for (var i = 0; i < tcRows.length; i++) { if (tcRows[i].hidden) { next = tcRows[i]; break; } }
+          if (next) {
+            next.hidden = false;
+            if (!reducedMotion) { next.classList.remove("is-new"); void next.offsetWidth; next.classList.add("is-new"); }
+            recalcTc();
+          }
+          var left = tcRows.filter(function (r) { return r.hidden; }).length;
+          if (left === 0) tcLabel("save");
+        } else if (tcState === "save") {
+          if (tcToast) tcToast.hidden = false;
+          tcLabel("again");
+        } else {
+          tcReset();
+        }
+      });
     }
-  }
-
-  function startTicket() {
-    if (ticketTimer) clearInterval(ticketTimer);
-    ticketTimer = setInterval(tickTicket, 2400); // пауза за кадром — бережём батарею
-  }
-  function stopTicket() {
-    if (ticketTimer) clearInterval(ticketTimer);
-    ticketTimer = null;
-  }
-
-  if (ticket && hasIO && !reducedMotion) {
-    var ticketIO = new IntersectionObserver(function (es) {
-      es.forEach(function (e) { if (e.isIntersecting) startTicket(); else stopTicket(); });
-    }, { threshold: 0.4 });
-    ticketIO.observe(ticket);
-  }
-
-  // тап по «готовится» отдаёт блюдо; если всё подано — открывает новый заказ
-  if (ticket) {
-    ticket.addEventListener("click", function (e) {
-      var s = e.target.closest(".ticket__state");
-      if (!s) return;
-      if (s.getAttribute("data-state") === "cook") {
-        serveState(s);
-      } else if (!ticket.querySelector('.ticket__state[data-state="cook"]')) {
-        tickTicket();
-      }
-      ticket.classList.add("is-touched");
-      if (ticketTimer) startTicket(); // такт автоцикла с нуля — не перебивает тап
-    });
   }
 
   /* ---------- Предзаполнение типа бизнеса ---------- */
