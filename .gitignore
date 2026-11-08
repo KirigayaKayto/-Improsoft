@@ -12,3 +12,6 @@ tg-config.php
 
 # логи браузерных проверок (Playwright MCP)
 .playwright-mcp/
+
+# эталонные скриншоты программы Impro (от клиента, не публикуются)
+_ref/

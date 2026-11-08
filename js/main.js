@@ -1,12 +1,12 @@
 /* ============================================================
-   Improsoft v3.5 «BIR CHIZIQ» — логика:
-   линия-позвоночник, рисуемые узлы, дафтар (с повтором), язык-«печать»,
-   мини-касса (сторно, номер чека), кухонный тикет (тап, часы),
-   чек магазина («скан» остатка), даты партий от текущей даты,
-   форма-чек, липкая панель; v3.5: scroll-reveal, счётчики hero,
-   печатная строка, лента-чек, живое вне экрана на паузе (.is-live),
-   scrollspy, прячущаяся шапка, кончик пера, авто-подсказки,
-   наклон бумаги / магнит кнопок / чернильное пятно (только мышь)
+   Improsoft v4.0 «Impro SaaS» — логика:
+   язык (сегмент-контрол), шапка (тень, прячется при прокрутке),
+   scroll-reveal, счётчики (hero + дашборд), лента возможностей,
+   дафтар (повтор, авто-подсказка), мини-касса (сторно, номер чека,
+   способы оплаты, плавающий итог), кухонный экран (тап, автоцикл, часы),
+   склад («Сканировать» → остаток), даты партий от текущей даты,
+   форма → send.php, липкая панель, scrollspy, наклон устройств,
+   магнит кнопок (только мышь)
    ============================================================ */
 
 (function () {
@@ -18,6 +18,7 @@
   var STORAGE_KEY = "improsoft-lang";
   var currentLang = DEFAULT_LANG;
   var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var hasIO = "IntersectionObserver" in window;
 
   /* ---------- Язык ---------- */
   function applyLang(lang) {
@@ -46,39 +47,36 @@
 
     document.title = dict["meta.title"];
 
-    // статусы кухонного тикета живут в data-state — переводим по нему
+    // статусы кухонного экрана живут в data-state — переводим по нему
     document.querySelectorAll(".ticket__state").forEach(function (s) {
       s.textContent = dict[s.getAttribute("data-state") === "done" ? "cafe.served" : "cafe.cooking"];
     });
 
-    // даты партий (Pharm) считаются от сегодняшнего дня по шаблону pharm.expiry с {d}
-    renderPharmDates(dict, lang);
+    // даты партий (Pharm) считаются от сегодняшнего дня
+    renderPharmDates(lang);
 
     // способ оплаты в строке «Чек закрыт» — на новом языке
     if (posPaidMethod) { var pmEl = document.getElementById("posMethod"); if (pmEl) pmEl.textContent = methodLabel(posPaidMethod); }
 
-    // строки мини-чека тоже перепечатываем на новом языке
+    // строки чека тоже перепечатываем на новом языке
     if (typeof posOrder !== "undefined" && posOrder && posOrder.length) renderPosRows(dict);
 
-    document.querySelectorAll(".stamp[data-lang]").forEach(function (btn) {
-      var active = btn.getAttribute("data-lang") === lang;
-      btn.setAttribute("aria-pressed", String(active));
+    document.querySelectorAll(".lang__btn[data-lang]").forEach(function (btn) {
+      btn.setAttribute("aria-pressed", String(btn.getAttribute("data-lang") === lang));
     });
 
     try { localStorage.setItem(STORAGE_KEY, lang); } catch (e) { /* приватный режим */ }
 
-    // v3.5: печатная строка начинает заново на новом языке, лента подстраивает скорость под длину текста
-    restartTypewriter();
-    syncTapeSpeed();
+    syncTapeSpeed(); // лента подстраивает скорость под длину текста
   }
 
-  /* даты партий: A — через 17 месяцев (OK), B — через 2 (СКОРО); никогда не устаревают */
-  function renderPharmDates(dict, lang) {
+  /* даты партий: +17 мес. (OK), +2 (СКОРО), +9 (OK) — никогда не устаревают; голая дата, заголовок столбца «Годен до» */
+  function renderPharmDates(lang) {
     var now = new Date();
     document.querySelectorAll(".batch__date[data-months]").forEach(function (el) {
       var d = new Date(now.getFullYear(), now.getMonth() + parseInt(el.getAttribute("data-months"), 10), 1);
       var mm = ("0" + (d.getMonth() + 1)).slice(-2);
-      el.textContent = dict["pharm.expiry"].replace("{d}", mm + (lang === "en" ? "/" : ".") + d.getFullYear());
+      el.textContent = mm + (lang === "en" ? "/" : ".") + d.getFullYear();
     });
   }
 
@@ -86,7 +84,9 @@
   var posPaidMethod = "";
   function methodLabel(key) {
     var b = document.querySelector('.pmethod[data-method="' + key + '"]');
-    return b ? b.textContent : "";
+    if (!b) return "";
+    var s = b.querySelector("[data-i18n], span"); // подпись без клавиши F2/F3
+    return (s || b).textContent;
   }
 
   /* сменить ключ элемента: applyLang читает data-i18n, поэтому подпись переживёт смену языка */
@@ -95,55 +95,29 @@
     el.textContent = I18N[currentLang][key];
   }
 
-  function setLang(lang, withSweep) {
-    if (withSweep && !reducedMotion) {
-      var head = document.getElementById("printhead");
-      head.classList.remove("is-sweeping");
-      void head.offsetWidth; // перезапуск анимации
-      head.classList.add("is-sweeping");
-      setTimeout(function () { applyLang(lang); }, 130);
-    } else {
-      applyLang(lang);
-    }
-  }
-
-  document.querySelectorAll(".stamp[data-lang]").forEach(function (btn) {
-    btn.addEventListener("click", function () {
-      // «шлепок» штампа: новый запуск анимации
-      if (!reducedMotion) { btn.classList.remove("is-stamped"); void btn.offsetWidth; btn.classList.add("is-stamped"); }
-      setLang(btn.getAttribute("data-lang"), true);
-    });
+  document.querySelectorAll(".lang__btn[data-lang]").forEach(function (btn) {
+    btn.addEventListener("click", function () { applyLang(btn.getAttribute("data-lang")); });
   });
 
   var saved = DEFAULT_LANG;
   try { saved = localStorage.getItem(STORAGE_KEY) || DEFAULT_LANG; } catch (e) {}
   applyLang(saved);
 
-  /* ---------- Шапка ---------- */
+  /* ---------- Шапка: тень при прокрутке, прячется при прокрутке вниз ---------- */
   var topbar = document.getElementById("topbar");
   var ticking = false;
-
-  /* ---------- Позвоночник: заполнение по прокрутке ---------- */
-  var spineFill = document.getElementById("spineFill");
-  var spineDot = document.getElementById("spineDot"); // кончик пера на конце линии
   var lastY = 0;
   function onScroll() {
     if (ticking) return;
     ticking = true;
     requestAnimationFrame(function () {
-      var doc = document.documentElement;
-      var max = doc.scrollHeight - window.innerHeight;
-      var p = max > 0 ? window.scrollY / max : 0;
-      // квантуем до 1%, чтобы не дёргать стиль каждый пиксель
-      p = Math.round(p * 100) / 100;
-      spineFill.style.transform = "scaleY(" + p + ")";
-      if (spineDot) spineDot.style.top = (p * 100) + "%";
       var y = window.scrollY;
-      topbar.classList.toggle("is-scrolled", y > 8);
-      // шапка прячется при прокрутке вниз и возвращается при прокрутке вверх
-      if (!reducedMotion) {
-        if (y > 240 && y > lastY + 4) topbar.classList.add("is-hidden");
-        else if (y < lastY - 4 || y <= 240) topbar.classList.remove("is-hidden");
+      if (topbar) {
+        topbar.classList.toggle("is-scrolled", y > 8);
+        if (!reducedMotion) {
+          if (y > 240 && y > lastY + 4) topbar.classList.add("is-hidden");
+          else if (y < lastY - 4 || y <= 240) topbar.classList.remove("is-hidden");
+        }
       }
       lastY = y;
       ticking = false;
@@ -152,35 +126,132 @@
   window.addEventListener("scroll", onScroll, { passive: true });
   onScroll();
 
-  /* ---------- Рисуемые линии: измеряем длины путей ---------- */
-  document.querySelectorAll(".drawline, .drawknot").forEach(function (path) {
-    try {
-      var len = Math.ceil(path.getTotalLength()) + 2;
-      path.style.setProperty("--len", len);
-    } catch (e) { /* элемент не path — пропускаем */ }
-  });
+  /* ---------- Часы в строках состояния экранов ---------- */
+  function pad2(n) { return (n < 10 ? "0" : "") + n; }
+  function setClock() {
+    var d = new Date();
+    var t = pad2(d.getHours()) + ":" + pad2(d.getMinutes());
+    var date = pad2(d.getDate()) + "." + pad2(d.getMonth() + 1) + "." + d.getFullYear();
+    document.querySelectorAll("[data-clock]").forEach(function (el) { el.textContent = t; });
+    document.querySelectorAll("[data-date]").forEach(function (el) { el.textContent = date; });
+  }
+  setClock();
+  setInterval(setClock, 30000);
 
-  /* один одноразовый наблюдатель: секция вошла — узел рисуется */
-  if ("IntersectionObserver" in window) {
-    var drawIO = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("is-drawn");
-          drawIO.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.35 });
-    document.querySelectorAll(".hero__line, .knot, .dome__visual, .route__map, .tamom__mark").forEach(function (el) {
-      drawIO.observe(el);
-    });
-  } else {
-    document.querySelectorAll(".hero__line, .knot, .dome__visual, .route__map, .tamom__mark").forEach(function (el) {
-      el.classList.add("is-drawn");
+  /* ---------- Счётчики: число «допечатывается» ---------- */
+  function fmtSum(n) {
+    return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  }
+  function countUp(el, target, dur) {
+    var fmt = el.getAttribute("data-fmt") === "sum" ? fmtSum : String;
+    if (reducedMotion) { el.textContent = fmt(target); return; }
+    var start = null;
+    var stepFn = function (ts) {
+      if (!start) start = ts;
+      var p = Math.min((ts - start) / dur, 1);
+      var e = 1 - Math.pow(1 - p, 3); // ease-out
+      el.textContent = fmt(Math.round(target * e));
+      if (p < 1) requestAnimationFrame(stepFn);
+    };
+    requestAnimationFrame(stepFn);
+  }
+  function countAll(root, dur) {
+    root.querySelectorAll("[data-count]").forEach(function (b) {
+      countUp(b, parseInt(b.getAttribute("data-count"), 10) || 0, dur);
     });
   }
-  // hero рисуется сразу при загрузке
-  var heroLine = document.querySelector(".hero__line");
-  if (heroLine) setTimeout(function () { heroLine.classList.add("is-drawn"); }, 250);
+
+  // цифры hero (3 / 7 / 4) — сразу после появления
+  var heroStats = document.querySelector(".hero__stats");
+  if (heroStats && !reducedMotion) {
+    heroStats.querySelectorAll("[data-count]").forEach(function (b) { b.textContent = "0"; });
+    setTimeout(function () { countAll(heroStats, 700); }, 300);
+  }
+
+  // дашборд владельца: столбики растут (.is-in), KPI считаются — один раз при появлении
+  var heroDash = document.getElementById("heroDash");
+  if (heroDash) {
+    if (!reducedMotion) heroDash.querySelectorAll("[data-count]").forEach(function (b) { b.textContent = "0"; });
+    var startDash = function () { heroDash.classList.add("is-in"); countAll(heroDash, 900); };
+    if (hasIO && !reducedMotion) {
+      var dashIO = new IntersectionObserver(function (es) {
+        es.forEach(function (e) { if (e.isIntersecting) { dashIO.disconnect(); setTimeout(startDash, 250); } });
+      }, { threshold: 0.4 });
+      dashIO.observe(heroDash);
+    } else {
+      startDash();
+    }
+  }
+
+  // будущая секция .proof: счётчик заведений
+  var proofNum = document.getElementById("proofNum");
+  if (proofNum && hasIO) {
+    var proofIO = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        proofIO.disconnect();
+        countUp(proofNum, parseInt(proofNum.getAttribute("data-target"), 10) || 0, 1200);
+      });
+    }, { threshold: 0.6 });
+    proofIO.observe(proofNum);
+  }
+
+  /* ---------- Scroll-reveal: блоки всплывают ---------- */
+  var revealEls = document.querySelectorAll("[data-reveal]");
+  var revealPending = Array.prototype.slice.call(revealEls);
+  function revealNow(el) {
+    el.classList.add("is-in");
+    var i = revealPending.indexOf(el);
+    if (i > -1) revealPending.splice(i, 1);
+  }
+  if (hasIO) {
+    var revealIO = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        // показываем и то, что уже выше экрана (перезагрузка посреди страницы, переход по якорю)
+        if (e.isIntersecting || e.boundingClientRect.bottom < 0) {
+          revealNow(e.target);
+          revealIO.unobserve(e.target);
+        }
+      });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.01 });
+    revealEls.forEach(function (el) { revealIO.observe(el); });
+    // страховка: блок, пролистанный мимо между кадрами, показываем по положению при следующей прокрутке
+    window.addEventListener("scroll", function () {
+      if (!revealPending.length) return;
+      revealPending.slice().forEach(function (el) {
+        if (el.getBoundingClientRect().top < window.innerHeight) revealNow(el);
+      });
+    }, { passive: true });
+  } else {
+    revealEls.forEach(function (el) { el.classList.add("is-in"); });
+  }
+
+  /* ---------- Непрерывные анимации живут только на экране ---------- */
+  var liveEls = document.querySelectorAll("[data-live]");
+  if (hasIO) {
+    var liveIO = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { e.target.classList.toggle("is-live", e.isIntersecting); });
+    }, { threshold: 0 });
+    liveEls.forEach(function (el) { liveIO.observe(el); });
+  } else {
+    liveEls.forEach(function (el) { el.classList.add("is-live"); });
+  }
+
+  /* ---------- Лента возможностей: дубликат списка для бесшовного цикла, скорость от длины ---------- */
+  var tapeBelt = document.getElementById("tapeBelt");
+  var tapeList = tapeBelt ? tapeBelt.querySelector(".tape__list") : null;
+  if (tapeBelt && tapeList && !tapeBelt.querySelector("[aria-hidden]")) {
+    var tapeClone = tapeList.cloneNode(true); // клон хранит data-i18n — переводится вместе со всеми
+    tapeClone.setAttribute("aria-hidden", "true");
+    tapeBelt.appendChild(tapeClone);
+  }
+  function syncTapeSpeed() {
+    if (!tapeBelt || !tapeList) return;
+    var w = tapeList.offsetWidth;
+    if (w) tapeBelt.style.animationDuration = Math.max(30, Math.round(w / 42)) + "s"; // ~42px/с
+  }
+  syncTapeSpeed();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncTapeSpeed);
 
   /* ---------- Дафтар: тап-реконсиляция ---------- */
   var entries = document.querySelectorAll(".dentry");
@@ -189,11 +260,11 @@
   var daftarRun = 0;   // токен: «Начать заново» обесценивает отложенные таймеры
   var allBtn = document.getElementById("daftarAll");
   var daftarStamp = document.getElementById("daftarStamp");
-
+  var daftarEmpty = document.getElementById("daftarEmpty");
   var mobileDaftar = window.matchMedia("(max-width: 680px)");
 
   function inlineClone(row, after) {
-    // на мобильном журнал скрыт — строка печатается прямо в дафтаре
+    // на мобильном журнал скрыт — строка печатается прямо в тетради
     var clone = row.cloneNode(true);
     clone.hidden = false;
     clone.removeAttribute("id");
@@ -205,8 +276,8 @@
     if (entry.classList.contains("is-done")) return;
     entry.classList.add("is-done");
     entry.setAttribute("aria-disabled", "true");
-    if (daftarBoard) daftarBoard.classList.add("is-touched"); // подсказка-пульс больше не нужна
-    document.getElementById("daftarEmpty").hidden = true;
+    if (daftarBoard) daftarBoard.classList.add("is-touched");
+    if (daftarEmpty) daftarEmpty.hidden = true;
     var row = document.querySelector('.daftar__ledger .lrow[data-row="' + entry.getAttribute("data-row") + '"]');
     if (row) {
       row.hidden = false;
@@ -218,8 +289,8 @@
       var total = document.getElementById("daftarTotal");
       setTimeout(function () {
         if (run !== daftarRun || doneCount !== entries.length) return; // успели сбросить
-        total.hidden = false;
-        if (mobileDaftar.matches) {
+        if (total) total.hidden = false;
+        if (mobileDaftar.matches && total) {
           var paper = document.getElementById("daftarPaper");
           var clone = total.cloneNode(true);
           clone.hidden = false;
@@ -227,10 +298,9 @@
           clone.classList.add("lrow--inline");
           paper.insertBefore(clone, paper.querySelector(".daftar__papernote"));
         }
-        if (daftarStamp) daftarStamp.hidden = false; // штамп «ПРОВЕДЕНО»
+        if (daftarStamp) daftarStamp.hidden = false;
       }, reducedMotion ? 0 : 350);
-      // кнопка не гаснет, а предлагает повтор
-      setKey(allBtn, "daftar.again");
+      if (allBtn) setKey(allBtn, "daftar.again"); // кнопка не гаснет, а предлагает повтор
     }
   }
 
@@ -240,28 +310,30 @@
     entries.forEach(function (e) { e.classList.remove("is-done"); e.removeAttribute("aria-disabled"); });
     document.querySelectorAll(".daftar__ledger .lrow").forEach(function (r) { r.hidden = true; }); // включая итог
     document.querySelectorAll("#daftarPaper .lrow--inline").forEach(function (c) { c.remove(); }); // мобильные клоны
-    document.getElementById("daftarEmpty").hidden = false;
+    if (daftarEmpty) daftarEmpty.hidden = false;
     if (daftarStamp) daftarStamp.hidden = true;
-    setKey(allBtn, "daftar.all");
+    if (allBtn) setKey(allBtn, "daftar.all");
   }
 
   entries.forEach(function (entry) {
     entry.addEventListener("click", function () { reconcile(entry); });
   });
 
-  allBtn.addEventListener("click", function () {
-    if (allBtn.getAttribute("data-i18n") === "daftar.again") { resetDaftar(); return; }
-    var run = daftarRun;
-    var delay = 0;
-    entries.forEach(function (entry) {
-      if (entry.classList.contains("is-done")) return;
-      setTimeout(function () { if (run === daftarRun) reconcile(entry); }, delay);
-      delay += reducedMotion ? 0 : 260;
+  if (allBtn) {
+    allBtn.addEventListener("click", function () {
+      if (allBtn.getAttribute("data-i18n") === "daftar.again") { resetDaftar(); return; }
+      var run = daftarRun;
+      var delay = 0;
+      entries.forEach(function (entry) {
+        if (entry.classList.contains("is-done")) return;
+        setTimeout(function () { if (run === daftarRun) reconcile(entry); }, delay);
+        delay += reducedMotion ? 0 : 260;
+      });
     });
-  });
+  }
 
-  // авто-подсказка (десктоп): дафтар на экране, никто не нажимал — первая запись проводится сама
-  if (daftarBoard && entries.length && "IntersectionObserver" in window && !reducedMotion) {
+  // авто-подсказка (десктоп): тетрадь на экране, никто не нажимал — первая запись проводится сама
+  if (daftarBoard && entries.length && hasIO && !reducedMotion) {
     var daftarAutoIO = new IntersectionObserver(function (es) {
       es.forEach(function (e) {
         if (!e.isIntersecting) return;
@@ -275,20 +347,10 @@
     daftarAutoIO.observe(daftarBoard);
   }
 
-  /* ---------- Кухонный тикет: живые статусы, тап «подано», часы ---------- */
+  /* ---------- Кухонный экран: живые статусы, тап «подано» ---------- */
   var ticket = document.getElementById("cafeTicket");
   var ticketTimer = null;
   var ticketNo = 214;
-  var ticketClock = document.getElementById("ticketClock");
-
-  function pad2(n) { return (n < 10 ? "0" : "") + n; }
-  function setClock() {
-    if (!ticketClock) return;
-    var d = new Date();
-    ticketClock.textContent = pad2(d.getHours()) + ":" + pad2(d.getMinutes());
-  }
-  setClock();
-  setInterval(setClock, 30000); // живое время посетителя — это смена текста, не движение
 
   function serveState(s) {
     s.setAttribute("data-state", "done");
@@ -301,7 +363,7 @@
     states.forEach(function (s) { if (s.getAttribute("data-state") === "cook") cooking.push(s); });
     var dict = I18N[currentLang];
     if (cooking.length === 0) {
-      // всё подано — новый тикет: статусы обратно, номер растёт, строки допечатываются
+      // всё подано — новый заказ: статусы обратно, номер растёт, строки появляются
       states.forEach(function (s) {
         s.setAttribute("data-state", "cook");
         s.textContent = dict["cafe.cooking"];
@@ -328,16 +390,14 @@
     ticketTimer = null;
   }
 
-  if (ticket && "IntersectionObserver" in window && !reducedMotion) {
-    var ticketIO = new IntersectionObserver(function (entries2) {
-      entries2.forEach(function (entry) {
-        if (entry.isIntersecting) startTicket(); else stopTicket();
-      });
+  if (ticket && hasIO && !reducedMotion) {
+    var ticketIO = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) startTicket(); else stopTicket(); });
     }, { threshold: 0.4 });
     ticketIO.observe(ticket);
   }
 
-  // тап по «готовится» отдаёт блюдо; если всё подано — открывает новый тикет
+  // тап по «готовится» отдаёт блюдо; если всё подано — открывает новый заказ
   if (ticket) {
     ticket.addEventListener("click", function (e) {
       var s = e.target.closest(".ticket__state");
@@ -356,62 +416,14 @@
   var bizSelect = document.getElementById("fBiz");
   document.querySelectorAll("[data-product]").forEach(function (link) {
     link.addEventListener("click", function () {
-      bizSelect.value = link.getAttribute("data-product");
+      if (bizSelect) bizSelect.value = link.getAttribute("data-product");
     });
   });
 
-  /* ---------- Форма-чек ---------- */
+  /* ---------- Форма ---------- */
   var form = document.getElementById("leadForm");
   var done = document.getElementById("formDone");
-  // без JS работает нативная валидация браузера; с JS — своя
-  form.setAttribute("novalidate", "");
 
-  form.addEventListener("submit", function (e) {
-    e.preventDefault();
-    var name = form.elements.name;
-    var phone = form.elements.phone;
-    var firstBad = null;
-    [name, phone].forEach(function (f) {
-      var empty = !f.value.trim();
-      setFieldError(f, empty);
-      if (empty && !firstBad) firstBad = f;
-    });
-    if (firstBad) { firstBad.focus(); return; }
-
-    var submitBtn = form.querySelector("button[type=submit]");
-    var errEl = document.getElementById("formErr");
-    submitBtn.disabled = true;
-    errEl.hidden = true;
-
-    var data = new FormData(form);
-    data.append("lang", currentLang);
-
-    fetch(form.getAttribute("action") || "send.php", {
-      method: "POST",
-      body: data,
-      headers: { "X-Requested-With": "fetch" }
-    }).then(function (r) {
-      return r.json();
-    }).then(function (j) {
-      if (!j.ok) throw new Error("send failed");
-      done.hidden = false;
-      if (!reducedMotion) {
-        var line = document.getElementById("doneLine");
-        line.style.animation = "printrow .9s ease";
-      }
-      setTimeout(function () {
-        form.reset();
-        done.hidden = true;
-        submitBtn.disabled = false;
-      }, 8000);
-    }).catch(function () {
-      // сервер недоступен (например, превью без PHP) — предлагаем Telegram
-      submitBtn.disabled = false;
-      errEl.hidden = false;
-    });
-  });
-
-  /* ошибка поля: подчёркивание + текст + aria — видно и слышно */
   function setFieldError(f, bad) {
     f.classList.toggle("is-invalid", bad);
     var err = document.getElementById(f.id + "Err");
@@ -425,18 +437,61 @@
     }
   }
 
-  [form.elements.name, form.elements.phone].forEach(function (f) {
-    f.addEventListener("input", function () { setFieldError(f, false); });
-  });
+  if (form) {
+    form.setAttribute("novalidate", ""); // без JS работает нативная валидация браузера; с JS — своя
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var name = form.elements.name;
+      var phone = form.elements.phone;
+      var firstBad = null;
+      [name, phone].forEach(function (f) {
+        var empty = !f.value.trim();
+        setFieldError(f, empty);
+        if (empty && !firstBad) firstBad = f;
+      });
+      if (firstBad) { firstBad.focus(); return; }
+
+      var submitBtn = form.querySelector("button[type=submit]");
+      var errEl = document.getElementById("formErr");
+      submitBtn.disabled = true;
+      if (errEl) errEl.hidden = true;
+
+      var data = new FormData(form);
+      data.append("lang", currentLang);
+
+      fetch(form.getAttribute("action") || "send.php", {
+        method: "POST",
+        body: data,
+        headers: { "X-Requested-With": "fetch" }
+      }).then(function (r) {
+        return r.json();
+      }).then(function (j) {
+        if (!j.ok) throw new Error("send failed");
+        if (done) { done.hidden = false; done.classList.add("is-shown"); }
+        setTimeout(function () {
+          form.reset();
+          if (done) { done.hidden = true; done.classList.remove("is-shown"); }
+          submitBtn.disabled = false;
+        }, 8000);
+      }).catch(function () {
+        // сервер недоступен (например, превью без PHP) — предлагаем Telegram
+        submitBtn.disabled = false;
+        if (errEl) errEl.hidden = false;
+      });
+    });
+
+    [form.elements.name, form.elements.phone].forEach(function (f) {
+      if (f) f.addEventListener("input", function () { setFieldError(f, false); });
+    });
+  }
 
   /* ---------- Липкая панель: прячем возле формы ---------- */
   var stickybar = document.getElementById("stickybar");
   var zayavka = document.getElementById("zayavka");
-  if ("IntersectionObserver" in window) {
-    var barIO = new IntersectionObserver(function (entries3) {
-      entries3.forEach(function (entry) {
-        stickybar.classList.toggle("is-hidden", entry.isIntersecting);
-      });
+  if (stickybar && zayavka && hasIO) {
+    var barIO = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { stickybar.classList.toggle("is-hidden", e.isIntersecting); });
     }, { threshold: 0.15 });
     barIO.observe(zayavka);
   }
@@ -448,10 +503,6 @@
   var posCount = 0;    // чеков за смену
   var posRowsEl = document.getElementById("posRows");
   var posClear = document.getElementById("posClear");
-
-  function fmtSum(n) {
-    return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-  }
 
   /* строки чека — «ключевые»: печатается только новая, остальные обновляются на месте */
   function renderPosRows(dict) {
@@ -468,22 +519,23 @@
         row.setAttribute("data-key", it.key);
         var name = document.createElement("span");
         name.className = "prow__name";
-        var dots = document.createElement("span");
-        dots.className = "prow__dots";
+        var qty = document.createElement("span");
+        qty.className = "prow__qty num";
         var sum = document.createElement("span");
-        sum.className = "mono prow__sum";
+        sum.className = "prow__sum num";
         var minus = document.createElement("button"); // сторно: убрать одну
         minus.type = "button";
-        minus.className = "prow__minus mono";
+        minus.className = "prow__minus";
         minus.textContent = "−";
         minus.setAttribute("data-key", it.key);
         row.appendChild(name);
-        row.appendChild(dots);
+        row.appendChild(qty);
         row.appendChild(sum);
         row.appendChild(minus);
         posRowsEl.appendChild(row);
       }
-      row.querySelector(".prow__name").textContent = dict["try." + it.key] + (it.qty > 1 ? " ×" + it.qty : "");
+      row.querySelector(".prow__name").textContent = dict["try." + it.key];
+      row.querySelector(".prow__qty").textContent = String(it.qty);
       row.querySelector(".prow__sum").textContent = fmtSum(it.price * it.qty);
       row.querySelector(".prow__minus").setAttribute("aria-label", dict["try.remove"] + ": " + dict["try." + it.key]);
     });
@@ -498,7 +550,7 @@
     return total;
   }
 
-  /* бейдж ×N на кнопке блюда: пересоздаём элемент — анимация popin запускается заново */
+  /* бейдж ×N на карточке блюда: пересоздаём элемент — анимация popin запускается заново */
   function syncBadge(key, qty) {
     var btn = document.querySelector('.pos__item[data-name="' + key + '"]');
     if (!btn) return;
@@ -524,9 +576,10 @@
     return it.qty;
   }
 
-  /* плавающий итог: виден, когда чек за экраном, а заказ не пуст */
+  /* плавающий итог: виден, когда корзина за экраном, а заказ не пуст */
   var posBar = document.getElementById("posBar");
   var receiptInView = true;
+  var cartEl = document.querySelector(".posreceipt");
 
   function updatePosBar(total) {
     if (!posBar) return;
@@ -538,18 +591,15 @@
     posBar.classList.toggle("is-on", total > 0 && !receiptInView);
   }
 
-  if (posBar && posRowsEl) {
-    if ("IntersectionObserver" in window) {
+  if (posBar && posRowsEl && cartEl) {
+    if (hasIO) {
       var receiptIO = new IntersectionObserver(function (es) {
-        es.forEach(function (e) {
-          receiptInView = e.isIntersecting;
-          updatePosBar();
-        });
+        es.forEach(function (e) { receiptInView = e.isIntersecting; updatePosBar(); });
       }, { threshold: 0.3 });
-      receiptIO.observe(document.querySelector(".posreceipt"));
+      receiptIO.observe(cartEl);
     }
     posBar.addEventListener("click", function () {
-      document.querySelector(".posreceipt").scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "center" });
+      cartEl.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "center" });
     });
   }
 
@@ -567,7 +617,7 @@
       btn.addEventListener("click", function () {
         var key = btn.getAttribute("data-name");
         var posPanel = btn.closest(".pos");
-        if (posPanel) posPanel.classList.add("is-touched"); // подсказка-пульс больше не нужна
+        if (posPanel) posPanel.classList.add("is-touched"); // подсказка больше не нужна
         var found = null;
         posOrder.forEach(function (it) { if (it.key === key) found = it; });
         if (found) {
@@ -579,11 +629,11 @@
         syncBadge(key, found.qty);
         document.getElementById("posDone").hidden = true;
         renderPosRows(I18N[currentLang]);
-        bizSelect.value = "cafe"; // поиграл с кассой кафе — предзаполним форму
+        if (bizSelect) bizSelect.value = "cafe"; // поиграл с кассой кафе — предзаполним форму
       });
     });
 
-    // сторно по «−» в строке; если строка исчезла — фокус на кнопку блюда
+    // сторно по «−» в строке; если строка исчезла — фокус на карточку блюда
     posRowsEl.addEventListener("click", function (e) {
       var b = e.target.closest(".prow__minus");
       if (!b) return;
@@ -618,7 +668,6 @@
       posPaidMethod = posMethod;
       document.getElementById("posMethod").textContent = methodLabel(posPaidMethod);
       document.getElementById("posDone").hidden = false;
-      // чек «отрывается», бейджи очищаются, следующий номер допечатывается после отрыва
       document.querySelectorAll(".pos__count").forEach(function (b) { b.remove(); });
       var noEl = document.getElementById("posNo");
       setTimeout(function () {
@@ -626,29 +675,31 @@
         if (!noEl) return;
         noEl.textContent = ("000" + posNo).slice(-4);
         if (!reducedMotion) { noEl.classList.remove("is-new"); void noEl.offsetWidth; noEl.classList.add("is-new"); }
-      }, reducedMotion ? 0 : 450);
-      if (!reducedMotion) {
-        var receipt = document.querySelector(".posreceipt");
-        receipt.classList.remove("is-paid");
-        void receipt.offsetWidth;
-        receipt.classList.add("is-paid");
+      }, reducedMotion ? 0 : 350);
+      if (!reducedMotion && cartEl) {
+        cartEl.classList.remove("is-paid");
+        void cartEl.offsetWidth;
+        cartEl.classList.add("is-paid");
       }
     });
   }
 
-  /* ---------- Чек магазина: тап — «скан» товара и живой остаток ---------- */
+  /* ---------- Склад магазина: «Сканировать» → остаток уменьшается ---------- */
   var shelf = document.querySelector(".shelf");
-  if (shelf) {
+  var scanBtn = document.querySelector(".shelf__scan");
+  if (shelf && scanBtn) {
     var shelfRows = shelf.querySelectorAll(".shelf__row[data-stock]");
     var shelfStock = document.getElementById("shelfStock");
     var shelfIdx = 0;
-    var scanShelf = function () {
+    scanBtn.addEventListener("click", function () {
       if (!shelfRows.length) return;
       var dict = I18N[currentLang];
       var row = shelfRows[shelfIdx++ % shelfRows.length];
       var left = parseInt(row.getAttribute("data-stock"), 10);
       var next = Math.max(left - 1, 0);
       row.setAttribute("data-stock", String(next));
+      var qty = row.querySelector(".stock__qty");
+      if (qty) qty.textContent = String(next);
       shelfRows.forEach(function (r) { r.classList.remove("is-scanned"); });
       row.classList.add("is-scanned");
       shelf.classList.add("is-used"); // подсказка больше не нужна
@@ -657,135 +708,15 @@
         shelfStock.textContent = row.querySelector("[data-i18n]").textContent + " · " + dict["market.stock"] + " " + left + " → " + next;
         if (!reducedMotion) { shelfStock.classList.remove("is-new"); void shelfStock.offsetWidth; shelfStock.classList.add("is-new"); }
       }
-      if (!reducedMotion) {
-        // большой штрих-код над главой «сканирует» ещё раз
-        var big = document.querySelector(".knot--barcode .scanline");
-        if (big) { big.style.animation = "none"; void big.offsetWidth; big.style.animation = "scan .6s ease"; }
-      }
-    };
-    shelf.addEventListener("click", scanShelf);
-    shelf.addEventListener("keydown", function (e) {
-      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); scanShelf(); }
+      if (!reducedMotion) { shelf.classList.remove("is-scanning"); void shelf.offsetWidth; shelf.classList.add("is-scanning"); }
     });
   }
 
-  /* ---------- Счётчики: число «допечатывается» (цифры hero и будущая секция .proof) ---------- */
-  function countUp(el, target, dur) {
-    if (reducedMotion) { el.textContent = String(target); return; }
-    var start = null;
-    var stepFn = function (ts) {
-      if (!start) start = ts;
-      var p = Math.min((ts - start) / dur, 1);
-      var e = 1 - Math.pow(1 - p, 3); // ease-out
-      el.textContent = String(Math.round(target * e));
-      if (p < 1) requestAnimationFrame(stepFn);
-    };
-    requestAnimationFrame(stepFn);
-  }
-
-  var proofNum = document.getElementById("proofNum");
-  if (proofNum && "IntersectionObserver" in window) {
-    var proofTarget = parseInt(proofNum.getAttribute("data-target"), 10) || 0;
-    var proofIO = new IntersectionObserver(function (entries4) {
-      entries4.forEach(function (entry) {
-        if (!entry.isIntersecting) return;
-        proofIO.disconnect();
-        countUp(proofNum, proofTarget, 1200);
-      });
-    }, { threshold: 0.6 });
-    proofIO.observe(proofNum);
-  }
-
-  // цифры hero (3 / 7 / 4) допечатываются, когда линия дорисовала насечки (~1.15 с после загрузки)
-  var heroCounts = document.querySelectorAll(".hero [data-count]");
-  if (heroCounts.length && !reducedMotion) {
-    heroCounts.forEach(function (b) { b.textContent = "0"; });
-    setTimeout(function () {
-      heroCounts.forEach(function (b) { countUp(b, parseInt(b.getAttribute("data-count"), 10) || 0, 600); });
-    }, 1150);
-  }
-
-  /* ---------- v3.5: scroll-reveal — блоки всплывают, как строки на чековой ленте ---------- */
-  var revealEls = document.querySelectorAll("[data-reveal]");
-  if ("IntersectionObserver" in window) {
-    var revealIO = new IntersectionObserver(function (es) {
-      es.forEach(function (e) {
-        // показываем и то, что уже выше экрана (перезагрузка посреди страницы, переход по якорю)
-        if (e.isIntersecting || e.boundingClientRect.bottom < 0) {
-          e.target.classList.add("is-in");
-          revealIO.unobserve(e.target);
-        }
-      });
-    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.01 });
-    revealEls.forEach(function (el) { revealIO.observe(el); });
-  } else {
-    revealEls.forEach(function (el) { el.classList.add("is-in"); });
-  }
-
-  /* ---------- v3.5: непрерывные анимации живут только на экране (бережём батарею) ---------- */
-  var liveEls = document.querySelectorAll("[data-live]");
-  if ("IntersectionObserver" in window) {
-    var liveIO = new IntersectionObserver(function (es) {
-      es.forEach(function (e) { e.target.classList.toggle("is-live", e.isIntersecting); });
-    }, { threshold: 0 });
-    liveEls.forEach(function (el) { liveIO.observe(el); });
-  } else {
-    liveEls.forEach(function (el) { el.classList.add("is-live"); });
-  }
-
-  /* ---------- v3.5: печатная строка hero — касса для кафе → учёт для магазина → партии для аптеки ---------- */
-  var typeEl = document.getElementById("heroType");
-  var heroSec = document.querySelector(".hero");
-  var typeTimer = null;
-  function restartTypewriter() {
-    if (!typeEl) return;
-    if (typeTimer) { clearTimeout(typeTimer); typeTimer = null; }
-    var dict = I18N[currentLang];
-    var phrases = [dict["hero.type1"], dict["hero.type2"], dict["hero.type3"]].filter(Boolean);
-    if (!phrases.length) return;
-    typeEl.textContent = phrases[0]; // первая фраза уже напечатана
-    if (reducedMotion) return;
-    var pi = 0, ci = phrases[0].length, deleting = false;
-    function tick() {
-      var wait;
-      if (document.hidden || (heroSec && !heroSec.classList.contains("is-live"))) {
-        wait = 600; // вкладка или hero за кадром — просто ждём
-      } else if (!deleting && ci === phrases[pi].length) {
-        deleting = true; wait = 1900; // пауза, чтобы прочитать
-      } else if (deleting && ci === 0) {
-        deleting = false; pi = (pi + 1) % phrases.length; wait = 350;
-      } else {
-        ci += deleting ? -1 : 1;
-        typeEl.textContent = phrases[pi].slice(0, ci);
-        wait = deleting ? 28 : 58;
-      }
-      typeTimer = setTimeout(tick, wait);
-    }
-    typeTimer = setTimeout(tick, 2200);
-  }
-  restartTypewriter();
-
-  /* ---------- v3.5: лента-чек — дубликат списка для бесшовного цикла, скорость от длины текста ---------- */
-  var tapeBelt = document.getElementById("tapeBelt");
-  var tapeList = tapeBelt ? tapeBelt.querySelector(".tape__list") : null;
-  if (tapeBelt && tapeList && !tapeBelt.querySelector("[aria-hidden]")) {
-    var tapeClone = tapeList.cloneNode(true); // клон хранит data-i18n — переводится вместе со всеми
-    tapeClone.setAttribute("aria-hidden", "true");
-    tapeBelt.appendChild(tapeClone);
-  }
-  function syncTapeSpeed() {
-    if (!tapeBelt || !tapeList) return;
-    var w = tapeList.offsetWidth;
-    if (w) tapeBelt.style.animationDuration = Math.max(30, Math.round(w / 42)) + "s"; // ~42px/с
-  }
-  syncTapeSpeed();
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncTapeSpeed);
-
-  /* ---------- v3.5: активный пункт меню по прокрутке ---------- */
+  /* ---------- Активный пункт меню по прокрутке ---------- */
   var navLinks = document.querySelectorAll(".topbar__nav a[href^='#']");
-  if (navLinks.length && "IntersectionObserver" in window) {
+  if (navLinks.length && hasIO) {
     var spyMap = {
-      chizma: "", daftar: "", try: "", rules: "",
+      hero: "", daftar: "", try: "", rules: "",
       cafe: "#cafe", market: "#cafe", pharm: "#cafe",
       platform: "#platform", day: "", ustalik: "",
       route: "#route", days: "", faq: "#zayavka", zayavka: "#zayavka"
@@ -807,12 +738,11 @@
     });
   }
 
-  /* ---------- v3.5: эффекты для мыши — наклон бумаги, магнит кнопок, чернильное пятно, параллакс линии ---------- */
+  /* ---------- Эффекты для мыши: наклон устройств, магнит кнопок ---------- */
   var finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
   if (finePointer && !reducedMotion) {
-    // 3D-наклон: бумага поворачивается к курсору (углы — CSS-переменные, transform в styles.css)
     document.querySelectorAll("[data-tilt]").forEach(function (el) {
-      var max = parseFloat(el.getAttribute("data-tilt")) || 6;
+      var max = parseFloat(el.getAttribute("data-tilt")) || 3;
       var raf = null, lx = 0, ly = 0;
       el.addEventListener("pointermove", function (e) {
         var r = el.getBoundingClientRect();
@@ -831,51 +761,19 @@
       });
     });
 
-    // магнит: кнопка чуть тянется к курсору (не более ~6px)
-    document.querySelectorAll(".btn:not(.btn--full)").forEach(function (b) {
+    // магнит: кнопка чуть тянется к курсору (не более ~5px)
+    document.querySelectorAll(".btn:not(.btn--full):not(.btn--sm)").forEach(function (b) {
       b.addEventListener("pointermove", function (e) {
         var r = b.getBoundingClientRect();
         var dx = e.clientX - (r.left + r.width / 2);
         var dy = e.clientY - (r.top + r.height / 2);
-        b.style.translate = (dx * 0.18).toFixed(1) + "px " + (dy * 0.18).toFixed(1) + "px";
+        b.style.translate = (dx * 0.15).toFixed(1) + "px " + (dy * 0.15).toFixed(1) + "px";
       });
       b.addEventListener("pointerleave", function () { b.style.translate = ""; });
     });
-
-    // чернильное пятно в тёмных главах: мягкий свет следует за курсором
-    document.querySelectorAll(".inkglow").forEach(function (g) {
-      var sec = g.parentNode, raf2 = null, px = 0, py = 0;
-      sec.addEventListener("pointermove", function (e) {
-        var r = sec.getBoundingClientRect();
-        px = e.clientX - r.left; py = e.clientY - r.top;
-        if (raf2) return;
-        raf2 = requestAnimationFrame(function () {
-          g.style.transform = "translate3d(" + Math.round(px) + "px," + Math.round(py) + "px,0)";
-          g.classList.add("is-on");
-          raf2 = null;
-        });
-      });
-      sec.addEventListener("pointerleave", function () { g.classList.remove("is-on"); });
-    });
-
-    // линия hero чуть смещается за курсором
-    var heroLineSvg = document.querySelector(".hero__line svg");
-    if (heroSec && heroLineSvg) {
-      var hraf = null, hx = 0, hy = 0;
-      heroSec.addEventListener("pointermove", function (e) {
-        hx = e.clientX / window.innerWidth - 0.5;
-        hy = e.clientY / window.innerHeight - 0.5;
-        if (hraf) return;
-        hraf = requestAnimationFrame(function () {
-          heroLineSvg.style.translate = (hx * 12).toFixed(1) + "px " + (hy * 8).toFixed(1) + "px";
-          hraf = null;
-        });
-      });
-      heroSec.addEventListener("pointerleave", function () { heroLineSvg.style.translate = ""; });
-    }
   }
 
-
   /* ---------- Год ---------- */
-  document.getElementById("year").textContent = String(new Date().getFullYear());
+  var yearEl = document.getElementById("year");
+  if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 })();
